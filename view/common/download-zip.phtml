@@ -1,0 +1,58 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\SiteRepresentation $site
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation|null $resource
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation[] $resources
+ * @var \Omeka\Api\Representation\MediaRepresentation[] $medias
+ * @var string $downloadUrl
+ * @var string $filename
+ * @var string $tag
+ * @var string $label
+ * @var string $class
+ * @var array $attributes
+ * @var string $dialogMessage
+ * @var int $totalSize
+ * @var string $formattedSize
+ * @var int $mediaCount
+ * @var int $resourceCount
+ * @var bool $isSingleFile
+ * @var bool $isQuery
+ */
+
+$plugins = $this->getHelperPluginManager();
+$escape = $plugins->get('escapeHtml');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$isButton = ($tag ?? 'button') === 'button';
+
+$attrs = [
+    'class' => trim('zip-download-link ' . $class),
+    'data-dialog-confirm' => 'true',
+    'data-dialog-message' => $dialogMessage,
+    'data-file-size' => $totalSize,
+    'data-file-count' => $mediaCount,
+    'data-filename' => $filename,
+    'data-download-url' => $downloadUrl,
+];
+
+if ($isButton) {
+    $attrs['type'] = 'button';
+} else {
+    $attrs['href'] = $downloadUrl;
+    $attrs['download'] = $filename;
+}
+
+foreach ($attributes as $key => $value) {
+    $attrs[$key] = $value;
+}
+
+$attrHtml = '';
+foreach ($attrs as $key => $value) {
+    $attrHtml .= ' ' . $escapeAttr($key) . '="' . $escapeAttr((string) $value) . '"';
+}
+
+$tagName = $isButton ? 'button' : 'a';
+?>
+
+<<?= $tagName ?><?= $attrHtml ?>><span class="download-label"><?= $escape($label) ?></span></<?= $tagName ?>>
