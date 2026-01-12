@@ -31,6 +31,11 @@
             "ZipDownload\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "ZipDownloadTest\\": "tests/ZipDownloadTest/"
+        }
+    },
     "extra": {
         "installer-name": "ZipDownload"
     }
