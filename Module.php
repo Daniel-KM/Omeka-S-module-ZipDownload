@@ -16,7 +16,7 @@ use Omeka\Module\AbstractModule;
  *
  * Stream resource files as zip archives for download.
  *
- * @copyright Daniel Berthereau, 2021-2025
+ * @copyright Daniel Berthereau, 2021-2026
  * @license http://www.cecill.info/licences/Licence_CeCILL_V2.1-en.txt
  */
 class Module extends AbstractModule

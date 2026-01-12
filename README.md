@@ -213,7 +213,7 @@ of the CeCILL license and that you accept its terms.
 Copyright
 ---------
 
-* Copyright Daniel Berthereau, 2021-2025 (see [Daniel-KM] on GitLab)
+* Copyright Daniel Berthereau, 2021-2026 (see [Daniel-KM] on GitLab)
 
 This module was designed for [Explore PSL] and [Musée de Bretagne].
 
