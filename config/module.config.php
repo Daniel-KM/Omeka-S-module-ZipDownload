@@ -30,7 +30,7 @@ return [
                     'zip-download' => [
                         'type' => \Laminas\Router\Http\Segment::class,
                         'options' => [
-                            'route' => '/download/:resource-type[/:resource-id]',
+                            'route' => '/zip-download/:resource-type[/:resource-id]',
                             'constraints' => [
                                 'resource-type' => 'item|media',
                                 'resource-id' => '\d+',
