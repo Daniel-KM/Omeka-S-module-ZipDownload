@@ -79,8 +79,8 @@ var ZipDownload = (function() {
             var type = types[i];
             var data = typesData[type];
             var checked = i === 0 ? ' checked' : '';
-            radiosHtml += '<label style="display: block; margin-bottom: .35em; cursor: pointer;">'
-                + '<input type="radio" name="zip-download-type" value="' + type + '"' + checked + '> '
+            radiosHtml += '<label class="zip-download-label" style="display: block; margin-bottom: .35em; cursor: pointer;">'
+                + '<input type="radio" name="zip-download-type" value="' + type + '"' + checked + ' style="width: auto; height: auto; margin-right: 6px;"> '
                 + data.label + ' (' + data.formattedSize + ')'
                 + '</label>';
         }
