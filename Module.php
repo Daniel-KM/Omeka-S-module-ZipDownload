@@ -3,7 +3,9 @@
 namespace ZipDownload;
 
 if (!class_exists(\Common\TraitModule::class, false)) {
-    require_once dirname(__DIR__) . '/Common/TraitModule.php';
+    require_once file_exists(dirname(__DIR__) . '/Common/src/TraitModule.php')
+        ? dirname(__DIR__) . '/Common/src/TraitModule.php'
+        : dirname(__DIR__) . '/Common/TraitModule.php';
 }
 
 use Common\TraitModule;
@@ -56,14 +58,18 @@ class Module extends AbstractModule
                 $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
                 'Common', '3.4.82'
             );
-            throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+            $errors[] = (string) $message;
         }
 
         if (PHP_VERSION_ID < 80100) {
             $message = new \Omeka\Stdlib\Message(
                 $translate('This module requires PHP 8.1 or later for zip streaming with ZipStream library.') // @translate
             );
-            throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $message);
+            $errors[] = (string) $message;
+        }
+
+        if ($errors) {
+            throw new \Omeka\Module\Exception\ModuleCannotInstallException(implode("\n", $errors));
         }
     }
 
