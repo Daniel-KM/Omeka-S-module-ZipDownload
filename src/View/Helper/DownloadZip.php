@@ -527,7 +527,8 @@ class DownloadZip extends AbstractHelper
     protected function slugify(string $input): string
     {
         if (extension_loaded('intl')) {
-            $transliterator = \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
+            static $transliterator;
+            $transliterator ??= \Transliterator::createFromRules(':: NFD; :: [:Nonspacing Mark:] Remove; :: NFC;');
             $slug = $transliterator->transliterate($input);
         } elseif (extension_loaded('iconv')) {
             $slug = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $input);
