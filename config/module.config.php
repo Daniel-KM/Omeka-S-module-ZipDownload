@@ -66,7 +66,7 @@ return [
         'site_settings' => [
             'zipdownload_enabled' => false,
             'zipdownload_content' => 'all',
-            'zipdownload_type' => 'original',
+            'zipdownload_type' => ['original'],
             'zipdownload_single_as_file' => false,
             'zipdownload_tag' => 'button',
             'zipdownload_max' => 25,

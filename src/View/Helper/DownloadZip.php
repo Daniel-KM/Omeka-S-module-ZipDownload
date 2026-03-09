@@ -71,12 +71,27 @@ class DownloadZip extends AbstractHelper
 
         // Get options from site settings or override.
         $content = $options['content'] ?? $siteSetting('zipdownload_content', 'all');
-        $type = $options['type'] ?? $siteSetting('zipdownload_type', 'original');
         $singleAsFile = $options['single_as_file'] ?? (bool) $siteSetting('zipdownload_single_as_file', false);
         $tag = $options['tag'] ?? $siteSetting('zipdownload_tag', 'button');
         $label = $options['label'] ?? $translate('Download');
         $class = $options['class'] ?? '';
         $attributes = $options['attributes'] ?? [];
+
+        // Get available types as array (backward compat with string).
+        if (isset($options['types'])) {
+            $types = (array) $options['types'];
+        } elseif (isset($options['type'])) {
+            $types = [(string) $options['type']];
+        } else {
+            $types = $siteSetting('zipdownload_type', ['original']);
+            if (is_string($types)) {
+                $types = [$types];
+            }
+        }
+        $types = array_values(array_filter($types));
+        if (empty($types)) {
+            $types = ['original'];
+        }
 
         // Check if resource has downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
@@ -95,37 +110,68 @@ class DownloadZip extends AbstractHelper
         // Load JavaScript assets once.
         $this->loadAssets();
 
-        // Calculate total file size.
-        $totalSize = $this->calculateTotalSize($medias, $type);
-        $formattedSize = $this->formatFileSize($totalSize);
-
         // Determine if it's a single file or zip.
-        // Default is always zip. Single file output only when option is enabled.
         $isSingleFile = $singleAsFile && $isSingleMedia;
 
-        // Build download URL.
-        $query = [
-            'content' => $content,
-            'type' => $type,
+        // Type labels for dialog.
+        $typeLabels = [
+            'original' => $translate('Original'),
+            'large' => $translate('Large'),
+            'medium' => $translate('Medium'),
+            'square' => $translate('Square'),
         ];
-        if ($singleAsFile) {
-            $query['single_as_file'] = '1';
-        }
-        $downloadUrl = $url('site/zip-download', [
+
+        // Build data for each available type.
+        $resourceRouteParams = [
             'resource-type' => $resource->resourceName() === 'media' ? 'media' : 'item',
             'resource-id' => $resource->id(),
-        ], ['query' => $query], true);
+        ];
+        $typesData = [];
+        foreach ($types as $t) {
+            $totalSize = $this->calculateTotalSize($medias, $t);
+            $query = ['content' => $content, 'type' => $t];
+            if ($singleAsFile) {
+                $query['single_as_file'] = '1';
+            }
+            $typesData[$t] = [
+                'label' => $typeLabels[$t] ?? $t,
+                'size' => $totalSize,
+                'formattedSize' => $this->formatFileSize($totalSize),
+                'url' => $url('site/zip-download', $resourceRouteParams, ['query' => $query], true),
+            ];
+        }
+
+        // Use first type as default.
+        $defaultType = reset($types);
+        $defaultData = $typesData[$defaultType];
+        $totalSize = $defaultData['size'];
+        $formattedSize = $defaultData['formattedSize'];
+        $downloadUrl = $defaultData['url'];
 
         // Build filename.
-        $filename = $this->buildFilename($resource, $isSingleFile, $type, $medias ? reset($medias) : null);
+        $filename = $this->buildFilename($resource, $isSingleFile, $defaultType, $medias ? reset($medias) : null);
 
         // Build dialog message.
         $mediaCount = count($medias);
-        if ($isSingleFile) {
+        $hasMultipleTypes = count($types) > 1;
+        if ($isSingleFile && !$hasMultipleTypes) {
             $dialogMessage = new PsrMessage(
                 'Download file: {filename} ({size})', // @translate
                 ['filename' => $escape($filename), 'size' => $formattedSize]
             );
+        } elseif ($hasMultipleTypes) {
+            // Size omitted: shown per type in dialog radios.
+            if ($isSingleFile) {
+                $dialogMessage = new PsrMessage(
+                    'Download file: {filename}', // @translate
+                    ['filename' => $escape($filename)]
+                );
+            } else {
+                $dialogMessage = new PsrMessage(
+                    'Download {count} files as zip: {filename}', // @translate
+                    ['count' => $mediaCount, 'filename' => $escape($filename)]
+                );
+            }
         } else {
             $dialogMessage = new PsrMessage(
                 'Download {count} files as zip: {filename} ({size})', // @translate
@@ -152,6 +198,7 @@ class DownloadZip extends AbstractHelper
             'resourceCount' => 0,
             'isSingleFile' => $isSingleFile,
             'isQuery' => false,
+            'typesData' => $typesData,
         ]);
     }
 
@@ -321,11 +368,26 @@ class DownloadZip extends AbstractHelper
 
         // Get options (singular in route, plural for api).
         $resourceType = $options['resource_type'] ?? 'items';
-        $type = $options['type'] ?? $siteSetting('zipdownload_type', 'original');
         $tag = $options['tag'] ?? $siteSetting('zipdownload_tag', 'button');
         $label = $options['label'] ?? $translate('Download');
         $class = $options['class'] ?? '';
         $attributes = $options['attributes'] ?? [];
+
+        // Get available types as array (backward compat with string).
+        if (isset($options['types'])) {
+            $types = (array) $options['types'];
+        } elseif (isset($options['type'])) {
+            $types = [(string) $options['type']];
+        } else {
+            $types = $siteSetting('zipdownload_type', ['original']);
+            if (is_string($types)) {
+                $types = [$types];
+            }
+        }
+        $types = array_values(array_filter($types));
+        if (empty($types)) {
+            $types = ['original'];
+        }
 
         // Get the right resource name (resources/items/media).
         $resourceType = $easyMeta->resourceName($resourceType);
@@ -374,17 +436,39 @@ class DownloadZip extends AbstractHelper
         // Load JavaScript assets once.
         $this->loadAssets();
 
-        // Calculate total file size.
-        $totalSize = $this->calculateTotalSize($allMedias, $type);
-        $formattedSize = $this->formatFileSize($totalSize);
+        // Type labels for dialog.
+        $typeLabels = [
+            'original' => $translate('Original'),
+            'large' => $translate('Large'),
+            'medium' => $translate('Medium'),
+            'square' => $translate('Square'),
+        ];
 
-        // Build download url with query parameters.
-        $urlQuery = $query;
-        $urlQuery['type'] = $type;
-        // Site is added by controller.
-        unset($urlQuery['site_id']);
+        // Build data for each available type.
+        $routeParams = [
+            'resource-type' => $resourceType === 'media' ? 'media' : 'item',
+        ];
+        $typesData = [];
+        foreach ($types as $t) {
+            $totalSize = $this->calculateTotalSize($allMedias, $t);
+            $urlQuery = $query;
+            $urlQuery['type'] = $t;
+            // Site is added by controller.
+            unset($urlQuery['site_id']);
+            $typesData[$t] = [
+                'label' => $typeLabels[$t] ?? $t,
+                'size' => $totalSize,
+                'formattedSize' => $this->formatFileSize($totalSize),
+                'url' => $url('site/zip-download', $routeParams, ['query' => $urlQuery], true),
+            ];
+        }
 
-        $downloadUrl = $url('site/zip-download', ['resource-type' => $resourceType === 'media' ? 'media' : 'item'], ['query' => $urlQuery], true);
+        // Use first type as default.
+        $defaultType = reset($types);
+        $defaultData = $typesData[$defaultType];
+        $totalSize = $defaultData['size'];
+        $formattedSize = $defaultData['formattedSize'];
+        $downloadUrl = $defaultData['url'];
 
         // Build filename.
         $filename = $this->slugify($site ? $site->title() : 'download') . '_' . date('Ymd_His') . '.zip';
@@ -392,15 +476,27 @@ class DownloadZip extends AbstractHelper
         // Build dialog message.
         $mediaCount = count($allMedias);
         $resourceCount = count($resources);
-        $dialogMessage = new PsrMessage(
-            'Download {file_count} files from {resource_count} resources as zip: {filename} ({size})', // @translate
-            [
-                'file_count' => $mediaCount,
-                'resource_count' => $resourceCount,
-                'filename' => $escape($filename),
-                'size' => $formattedSize,
-            ]
-        );
+        $hasMultipleTypes = count($types) > 1;
+        if ($hasMultipleTypes) {
+            $dialogMessage = new PsrMessage(
+                'Download {file_count} files from {resource_count} resources as zip: {filename}', // @translate
+                [
+                    'file_count' => $mediaCount,
+                    'resource_count' => $resourceCount,
+                    'filename' => $escape($filename),
+                ]
+            );
+        } else {
+            $dialogMessage = new PsrMessage(
+                'Download {file_count} files from {resource_count} resources as zip: {filename} ({size})', // @translate
+                [
+                    'file_count' => $mediaCount,
+                    'resource_count' => $resourceCount,
+                    'filename' => $escape($filename),
+                    'size' => $formattedSize,
+                ]
+            );
+        }
         $dialogMessage = $translate($dialogMessage);
 
         return $view->partial('common/download-zip', [
@@ -421,6 +517,7 @@ class DownloadZip extends AbstractHelper
             'resourceCount' => $resourceCount,
             'isSingleFile' => false,
             'isQuery' => true,
+            'typesData' => $typesData,
         ]);
     }
 

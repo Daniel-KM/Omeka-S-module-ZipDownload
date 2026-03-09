@@ -18,6 +18,7 @@
  * @var int $resourceCount
  * @var bool $isSingleFile
  * @var bool $isQuery
+ * @var array $typesData
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -35,6 +36,10 @@ $attrs = [
     'data-filename' => $filename,
     'data-download-url' => $downloadUrl,
 ];
+
+if (!empty($typesData) && count($typesData) > 1) {
+    $attrs['data-download-types'] = json_encode($typesData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+}
 
 if ($isButton) {
     $attrs['type'] = 'button';

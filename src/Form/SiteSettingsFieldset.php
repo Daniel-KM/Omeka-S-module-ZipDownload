@@ -52,10 +52,11 @@ class SiteSettingsFieldset extends Fieldset
             ])
             ->add([
                 'name' => 'zipdownload_type',
-                'type' => CommonElement\OptionalRadio::class,
+                'type' => CommonElement\OptionalMultiCheckbox::class,
                 'options' => [
                     'element_group' => 'zip_download',
-                    'label' => 'File type', // @translate
+                    'label' => 'File types available for download', // @translate
+                    'info' => 'Select which file types visitors can download. If multiple types are selected, visitors will be able to choose in the download dialog.', // @translate
                     'value_options' => [
                         'original' => 'Original', // @translate
                         'large' => 'Large', // @translate
