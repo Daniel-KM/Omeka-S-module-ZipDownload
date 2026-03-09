@@ -1,0 +1,173 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-09 00:00+0000\n"
+"PO-Revision-Date: 2026-03-09 00:00+0000\n"
+"Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+
+#: Module.php:58
+#, php-format
+msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
+
+#: Module.php:66
+msgid "This module requires PHP 8.1 or later for zip streaming with ZipStream library."
+msgstr "Ce module nécessite PHP 8.1 ou une version ultérieure pour la création en temps réel de fichiers zip via la bibliothèque ZipStream."
+
+#: src/Controller/Site/DownloadController.php:569
+#, php-format
+msgid "%1$s and %2$s"
+msgstr "%1$s et %2$s"
+
+#: src/Controller/Site/DownloadController.php:572
+#, php-format
+msgid "%1$s, %2$s, and %3$s"
+msgstr "%1$s, %2$s, et %3$s"
+
+#: src/Controller/Site/DownloadController.php:575
+#, php-format
+msgid "%s et al."
+msgstr "%s et al."
+
+#: src/Controller/Site/DownloadController.php:603
+#, php-format
+msgid "Accessed on %s"
+msgstr "Consulté le %s"
+
+#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:372
+msgid "Download"
+msgstr "Télécharger"
+
+#: src/View/Helper/DownloadZip.php:119 src/View/Helper/DownloadZip.php:442
+msgid "Large"
+msgstr "Large"
+
+#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:444
+msgid "Square"
+msgstr "Carré"
+
+#: view/common/resource-page-block-layout/download-primary.phtml:21
+#, php-format
+msgid "Download file (%s)"
+msgstr "Télécharger le fichier (%s)"
+
+#: data/scripts/upgrade.php:43
+msgid "It is now possible to configure multiple file types for download. When multiple types are selected, visitors can choose the format in the download dialog."
+msgstr "Il est désormais possible de configurer plusieurs types de fichiers pour le téléchargement. Lorsque plusieurs types sont sélectionnés, les visiteurs peuvent choisir le format dans la boîte de dialogue."
+
+#: src/View/Helper/DownloadZip.php:159
+msgid "Download file: {filename} ({size})"
+msgstr "Télécharger le fichier : {filename} ({size})"
+
+#: src/View/Helper/DownloadZip.php:166
+msgid "Download file: {filename}"
+msgstr "Télécharger le fichier : {filename}"
+
+#: src/View/Helper/DownloadZip.php:171
+msgid "Download {count} files as zip: {filename}"
+msgstr "Télécharger {count} fichiers en zip : {filename}"
+
+#: src/View/Helper/DownloadZip.php:177
+msgid "Download {count} files as zip: {filename} ({size})"
+msgstr "Télécharger {count} fichiers en zip : {filename} ({size})"
+
+#: src/View/Helper/DownloadZip.php:482
+msgid "Download {file_count} files from {resource_count} resources as zip: {filename}"
+msgstr "Télécharger {file_count} fichiers de {resource_count} ressources en zip : {filename}"
+
+#: src/View/Helper/DownloadZip.php:491
+msgid "Download {file_count} files from {resource_count} resources as zip: {filename} ({size})"
+msgstr "Télécharger {file_count} fichiers provenant de {resource_count} ressources en zip : {filename} ({size})"
+
+#: src/Form/SiteSettingsFieldset.php:14 src/Form/SiteSettingsFieldset.php:17
+msgid "Zip Download"
+msgstr "Téléchargement Zip"
+
+#: src/Form/SiteSettingsFieldset.php:31
+msgid "Enable download zip"
+msgstr "Activer le téléchargement zip"
+
+#: src/Form/SiteSettingsFieldset.php:32
+msgid "Allow visitors to download resource files. When disabled, the download button is hidden and the download endpoint returns a 404 error."
+msgstr "Autoriser les visiteurs à télécharger les fichiers des ressources. Si désactivé, le bouton de téléchargement est masqué et l’url de téléchargement renvoie une erreur 404."
+
+#: src/Form/SiteSettingsFieldset.php:43
+msgid "Download content"
+msgstr "Télécharger le contenu"
+
+#: src/Form/SiteSettingsFieldset.php:45
+msgid "All media files (zip archive)"
+msgstr "Tous les fichiers (archive zip)"
+
+#: src/Form/SiteSettingsFieldset.php:46
+msgid "Primary media only (single file, no zip)"
+msgstr "Média principal uniquement (fichier simple, sans zip)"
+
+#: src/Form/SiteSettingsFieldset.php:58
+msgid "File types available for download"
+msgstr "Types de fichiers disponibles au téléchargement"
+
+#: src/Form/SiteSettingsFieldset.php:59
+msgid "Select which file types visitors can download. If multiple types are selected, visitors will be able to choose in the download dialog."
+msgstr "Sélectionnez les types de fichiers que les visiteurs peuvent télécharger. Si plusieurs types sont sélectionnés, les visiteurs pourront choisir dans la boîte de dialogue."
+
+#: src/Form/SiteSettingsFieldset.php:76
+msgid "Output single file as native file"
+msgstr "Utiliser le fichier natif si le document a un seul fichier"
+
+#: src/Form/SiteSettingsFieldset.php:87
+msgid "Download element"
+msgstr "Télécharger l’élément"
+
+#: src/Form/SiteSettingsFieldset.php:88
+msgid "Use a button (default) to avoid scraping by bots, or a link for better accessibility."
+msgstr "Utilisez un bouton (par défaut) pour éviter le vol par les robots, ou un lien pour une meilleure accessibilité."
+
+#: src/Form/SiteSettingsFieldset.php:90
+msgid "Button (recommended)"
+msgstr "Bouton (recommandé)"
+
+#: src/Form/SiteSettingsFieldset.php:91
+msgid "Link"
+msgstr "Lien"
+
+#: src/Form/SiteSettingsFieldset.php:103
+msgid "Maximum resources for batch download"
+msgstr "Nombre maximal de fichiers pour le téléchargement groupé"
+
+#: src/Form/SiteSettingsFieldset.php:104
+msgid "Maximum number of resources that can be downloaded at once via query. Set 0 for no limit."
+msgstr "Nombre maximal de ressources pouvant être téléchargées simultanément via une requête. Indiquez 0 pour ne pas limiter."
+
+#: src/Form/SiteSettingsFieldset.php:117
+msgid "Copyright text"
+msgstr "Mention de copyright"
+
+#: src/Controller/Site/DownloadController.php:36
+msgid "Attempt to download zip for resource {resource_type} #{resource_id} on site \"{site}\" without download enabled."
+msgstr "Tentative de téléchargement zip pour la ressource {resource_type} #{resource_id} sur le site « {site} » alors que le téléchargement n’est pas activé."
+
+#: src/Controller/Site/DownloadController.php:94
+#: src/Controller/Site/DownloadController.php:183
+msgid "The ZipStream library is required to download multiple files as zip."
+msgstr "La bibliothèque ZipStream est nécessaire pour télécharger plusieurs fichiers au format zip."
+
+#: src/Controller/Site/DownloadController.php:118
+msgid "Attempt to download zip via query for {resource_type} on site \"{site}\" without download enabled."
+msgstr "Tentative de téléchargement zip via une requête pour {resource_type} sur le site « {site} » alors que le téléchargement n’est pas activé."
+
+#: src/Site/ResourcePageBlockLayout/DownloadPrimary.php:16
+msgid "Download primary media"
+msgstr "Télécharger le média principal"
+
+#: src/Site/ResourcePageBlockLayout/DownloadZip.php:16
+msgid "Download zip"
+msgstr "Télécharger le zip"
