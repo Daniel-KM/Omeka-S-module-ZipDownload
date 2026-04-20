@@ -5,6 +5,7 @@ namespace ZipDownload\Form;
 use Common\Form\Element as CommonElement;
 use Laminas\Form\Element;
 use Laminas\Form\Fieldset;
+use Omeka\Form\Element as OmekaElement;
 
 class SiteSettingsFieldset extends Fieldset
 {
@@ -66,6 +67,24 @@ class SiteSettingsFieldset extends Fieldset
                 ],
                 'attributes' => [
                     'id' => 'zipdownload_type',
+                ],
+            ])
+            ->add([
+                'name' => 'zipdownload_type_labels',
+                'type' => OmekaElement\ArrayTextarea::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'File type labels in download dialog', // @translate
+                    'info' => 'Override the dialog labels for each file type, one per line as "type = label". Leave empty to use the default translated labels.', // @translate
+                    'as_key_value' => true,
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_type_labels',
+                    'rows' => 4,
+                    'placeholder' => <<<'TXT'
+                        original = High definition
+                        large = Medium definition
+                        TXT,
                 ],
             ])
             ->add([

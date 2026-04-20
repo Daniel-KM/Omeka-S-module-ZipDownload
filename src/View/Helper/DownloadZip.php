@@ -114,13 +114,20 @@ class DownloadZip extends AbstractHelper
         // Determine if it's a single file or zip.
         $isSingleFile = $singleAsFile && $isSingleMedia;
 
-        // Type labels for dialog.
+        // Type labels for dialog. Site setting overrides defaults.
         $typeLabels = [
             'original' => $translate('Original'),
             'large' => $translate('Large'),
             'medium' => $translate('Medium'),
             'square' => $translate('Square'),
         ];
+        $customLabels = $siteSetting('zipdownload_type_labels', []);
+        if (is_array($customLabels)) {
+            $typeLabels = array_replace(
+                $typeLabels,
+                array_filter($customLabels, fn($v) => strlen(trim((string) $v)))
+            );
+        }
 
         // Build data for each available type.
         $resourceRouteParams = [
@@ -442,13 +449,20 @@ class DownloadZip extends AbstractHelper
         // Load JavaScript assets once.
         $this->loadAssets();
 
-        // Type labels for dialog.
+        // Type labels for dialog. Site setting overrides defaults.
         $typeLabels = [
             'original' => $translate('Original'),
             'large' => $translate('Large'),
             'medium' => $translate('Medium'),
             'square' => $translate('Square'),
         ];
+        $customLabels = $siteSetting('zipdownload_type_labels', []);
+        if (is_array($customLabels)) {
+            $typeLabels = array_replace(
+                $typeLabels,
+                array_filter($customLabels, fn($v) => strlen(trim((string) $v)))
+            );
+        }
 
         // Build data for each available type.
         $routeParams = [
