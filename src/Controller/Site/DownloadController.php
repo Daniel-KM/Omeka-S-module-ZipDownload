@@ -552,7 +552,7 @@ class DownloadController extends AbstractActionController
      */
     protected function buildCitation($resource): string
     {
-        $translate = $this->viewHelpers()->get('translate');
+        $translate = $this->plugin('translate');
 
         $citation = '';
 
