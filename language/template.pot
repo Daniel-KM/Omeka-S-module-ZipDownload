@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 00:00+0000\n"
+"POT-Creation-Date: 2026-04-06 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,9 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Module.php:58
+#: data/scripts/upgrade.php:33 Module.php:58
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr ""
+
+#: data/scripts/upgrade.php:37
+msgid "Missing requirement. Unable to upgrade."
 msgstr ""
 
 #: Module.php:66
@@ -28,35 +32,15 @@ msgid ""
 "library."
 msgstr ""
 
-#: src/Controller/Site/DownloadController.php:569
-#, php-format
-msgid "%1$s and %2$s"
-msgstr ""
-
-#: src/Controller/Site/DownloadController.php:572
-#, php-format
-msgid "%1$s, %2$s, and %3$s"
-msgstr ""
-
-#: src/Controller/Site/DownloadController.php:575
-#, php-format
-msgid "%s et al."
-msgstr ""
-
-#: src/Controller/Site/DownloadController.php:603
-#, php-format
-msgid "Accessed on %s"
-msgstr ""
-
-#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:372
+#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:379
 msgid "Download"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:119 src/View/Helper/DownloadZip.php:442
+#: src/View/Helper/DownloadZip.php:119 src/View/Helper/DownloadZip.php:449
 msgid "Large"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:444
+#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:451
 msgid "Square"
 msgstr ""
 
@@ -65,110 +49,150 @@ msgstr ""
 msgid "Download file (%s)"
 msgstr ""
 
-#: data/scripts/upgrade.php:43
+#: view/common/zip-download-citation.phtml:20
+#, php-format
+msgid "%1$s and %2$s"
+msgstr ""
+
+#: view/common/zip-download-citation.phtml:21
+#, php-format
+msgid "%1$s, %2$s and %3$s"
+msgstr ""
+
+#: view/common/zip-download-citation.phtml:22
+#, php-format
+msgid "%s et al."
+msgstr ""
+
+#: view/common/zip-download-citation.phtml:41
+#, php-format
+msgid "Viewed on %s"
+msgstr ""
+
+#: data/scripts/upgrade.php:52
 msgid ""
 "It is now possible to configure multiple file types for download. When "
 "multiple types are selected, visitors can choose the format in the download "
 "dialog."
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:159
+#: data/scripts/upgrade.php:59
+msgid ""
+"The copyright text included in the zip (COPYRIGHT.txt) is now rendered via "
+"customizable theme partials."
+msgstr ""
+
+#: view/common/zip-download-citation.phtml:41
+msgid "Y-m-d"
+msgstr ""
+
+#: src/View/Helper/DownloadZip.php:165
 msgid "Download file: {filename} ({size})"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:166
+#: src/View/Helper/DownloadZip.php:172
 msgid "Download file: {filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:171
+#: src/View/Helper/DownloadZip.php:177
 msgid "Download {count} files as zip: {filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:177
+#: src/View/Helper/DownloadZip.php:183
 msgid "Download {count} files as zip: {filename} ({size})"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:482
+#: src/View/Helper/DownloadZip.php:495
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:491
+#: src/View/Helper/DownloadZip.php:504
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename} ({size})"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:14 src/Form/SiteSettingsFieldset.php:17
+#: src/Form/SiteSettingsFieldset.php:15 src/Form/SiteSettingsFieldset.php:18
 msgid "Zip Download"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:31
+#: src/Form/SiteSettingsFieldset.php:32
 msgid "Enable download zip"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:32
+#: src/Form/SiteSettingsFieldset.php:33
 msgid ""
 "Allow visitors to download resource files. When disabled, the download "
 "button is hidden and the download endpoint returns a 404 error."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:43
+#: src/Form/SiteSettingsFieldset.php:44
 msgid "Download content"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:45
+#: src/Form/SiteSettingsFieldset.php:46
 msgid "All media files (zip archive)"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:46
+#: src/Form/SiteSettingsFieldset.php:47
 msgid "Primary media only (single file, no zip)"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:58
+#: src/Form/SiteSettingsFieldset.php:59
 msgid "File types available for download"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:59
+#: src/Form/SiteSettingsFieldset.php:60
 msgid ""
 "Select which file types visitors can download. If multiple types are "
 "selected, visitors will be able to choose in the download dialog."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:76
+#: src/Form/SiteSettingsFieldset.php:77
+msgid "File type labels in download dialog"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:78
+msgid ""
+"Override the dialog labels for each file type, one per line as \"type = "
+"label\". Leave empty to use the default translated labels."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:95
 msgid "Output single file as native file"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:87
+#: src/Form/SiteSettingsFieldset.php:106
 msgid "Download element"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:88
+#: src/Form/SiteSettingsFieldset.php:107
 msgid ""
 "Use a button (default) to avoid scraping by bots, or a link for better "
 "accessibility."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:90
+#: src/Form/SiteSettingsFieldset.php:109
 msgid "Button (recommended)"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:91
+#: src/Form/SiteSettingsFieldset.php:110
 msgid "Link"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:103
+#: src/Form/SiteSettingsFieldset.php:122
 msgid "Maximum resources for batch download"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:104
+#: src/Form/SiteSettingsFieldset.php:123
 msgid ""
 "Maximum number of resources that can be downloaded at once via query. Set 0 "
 "for no limit."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:117
+#: src/Form/SiteSettingsFieldset.php:136
 msgid "Copyright text"
 msgstr ""
 
