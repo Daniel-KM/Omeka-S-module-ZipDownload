@@ -28,6 +28,15 @@ $messenger = $plugins->get('messenger');
 $siteSettings = $services->get('Omeka\Settings\Site');
 $entityManager = $services->get('Omeka\EntityManager');
 
+if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.84')) {
+    $message = new \Omeka\Stdlib\Message(
+        $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate
+        'Common', '3.4.84'
+    );
+    $messenger->addError($message);
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $translate('Missing requirement. Unable to upgrade.')); // @translate
+}
+
 if (version_compare((string) $oldVersion, '3.4.3', '<')) {
     // Convert zipdownload_type from string to array for all sites.
     $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
