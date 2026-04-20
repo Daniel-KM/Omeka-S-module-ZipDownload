@@ -53,3 +53,10 @@ if (version_compare((string) $oldVersion, '3.4.3', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare((string) $oldVersion, '3.4.4', '<')) {
+    $message = new PsrMessage(
+        'The copyright text included in the zip (COPYRIGHT.txt) is now rendered via customizable theme partials.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
