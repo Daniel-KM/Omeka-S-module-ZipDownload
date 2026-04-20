@@ -68,13 +68,17 @@ class DownloadController extends AbstractActionController
 
         // Get downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
-        if (!$medias) {
+
+        // Allow empty medias when copyright text is configured (text-only zip).
+        $hasCopyrightText = strlen(trim((string) $this->siteSettings()->get('zipdownload_text', '')));
+        if (!$medias && !$hasCopyrightText) {
             return $this->notFoundAction();
         }
 
-        // Determine if single file or zip.
-        // Default is always zip. Single file output only when option is enabled.
+        // Determine if single file or zip. Default is always zip. Single file
+        // output only when option is enabled.
         $isSingleFile = $singleAsFile
+            && $medias
             && ($content === 'primary' || count($medias) === 1);
 
         // Check if ZipStream is available for zip output.
@@ -88,6 +92,9 @@ class DownloadController extends AbstractActionController
         if (!$hasZipStream) {
             if (count($medias) === 1) {
                 return $this->streamSingleFile(reset($medias), $type, $resource);
+            }
+            if (!$medias) {
+                return $this->notFoundAction();
             }
             // Cannot create zip without ZipStream library.
             $this->messenger()->addError(

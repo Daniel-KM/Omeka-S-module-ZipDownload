@@ -95,14 +95,15 @@ class DownloadZip extends AbstractHelper
 
         // Check if resource has downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
-        if (empty($medias)) {
+        $hasCopyrightText = strlen(trim((string) $siteSetting('zipdownload_text', '')));
+        if (empty($medias) && !$hasCopyrightText) {
             return '';
         }
 
-        // Check if zip output will be needed.
-        // Zip streaming requires PHP 8.1+ (ZipStream v3).
-        $isSingleMedia = $content === 'primary' || count($medias) === 1;
-        $needsZip = !$singleAsFile || !$isSingleMedia;
+        // Check if zip output will be needed. Zip streaming requires PHP 8.1+
+        // (ZipStream v3).
+        $isSingleMedia = !empty($medias) && ($content === 'primary' || count($medias) === 1);
+        $needsZip = !$singleAsFile || !$isSingleMedia || empty($medias);
         if ($needsZip && PHP_VERSION_ID < 80100) {
             return '';
         }
@@ -154,7 +155,12 @@ class DownloadZip extends AbstractHelper
         // Build dialog message.
         $mediaCount = count($medias);
         $hasMultipleTypes = count($types) > 1;
-        if ($isSingleFile && !$hasMultipleTypes) {
+        if ($mediaCount === 0) {
+            $dialogMessage = new PsrMessage(
+                'Download notice: {filename}', // @translate
+                ['filename' => $escape($filename)]
+            );
+        } elseif ($isSingleFile && !$hasMultipleTypes) {
             $dialogMessage = new PsrMessage(
                 'Download file: {filename} ({size})', // @translate
                 ['filename' => $escape($filename), 'size' => $formattedSize]
