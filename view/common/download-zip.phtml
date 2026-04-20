@@ -19,6 +19,7 @@
  * @var bool $isSingleFile
  * @var bool $isQuery
  * @var array $typesData
+ * @var array $typeLabels
  */
 
 $plugins = $this->getHelperPluginManager();
@@ -38,7 +39,12 @@ $attrs = [
 ];
 
 if (!empty($typesData) && count($typesData) > 1) {
-    $attrs['data-download-types'] = json_encode($typesData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    $labeledTypesData = [];
+    foreach ($typesData as $type => $data) {
+        $data['label'] = $typeLabels[$type] ?? $type;
+        $labeledTypesData[$type] = $data;
+    }
+    $attrs['data-download-types'] = json_encode($labeledTypesData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 }
 
 if ($isButton) {

@@ -135,7 +135,6 @@ class DownloadZip extends AbstractHelper
                 $query['single_as_file'] = '1';
             }
             $typesData[$t] = [
-                'label' => $typeLabels[$t] ?? $t,
                 'size' => $totalSize,
                 'formattedSize' => $this->formatFileSize($totalSize),
                 'url' => $url('site/zip-download', $resourceRouteParams, ['query' => $query], true),
@@ -205,6 +204,7 @@ class DownloadZip extends AbstractHelper
             'isSingleFile' => $isSingleFile,
             'isQuery' => false,
             'typesData' => $typesData,
+            'typeLabels' => $typeLabels,
         ]);
     }
 
@@ -462,7 +462,6 @@ class DownloadZip extends AbstractHelper
             // Site is added by controller.
             unset($urlQuery['site_id']);
             $typesData[$t] = [
-                'label' => $typeLabels[$t] ?? $t,
                 'size' => $totalSize,
                 'formattedSize' => $this->formatFileSize($totalSize),
                 'url' => $url('site/zip-download', $routeParams, ['query' => $urlQuery], true),
@@ -524,6 +523,7 @@ class DownloadZip extends AbstractHelper
             'isSingleFile' => false,
             'isQuery' => true,
             'typesData' => $typesData,
+            'typeLabels' => $typeLabels,
         ]);
     }
 

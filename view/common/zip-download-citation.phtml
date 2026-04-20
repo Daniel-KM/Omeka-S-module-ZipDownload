@@ -38,6 +38,6 @@ if ($date) {
 $url = $resource->siteUrl($site ? $site->slug() : null, true) ?: $resource->apiUrl();
 $citation .= ', ' . $url;
 
-$citation .= '. ' . sprintf($translate('Viewed le %s'), date('Y-m-d')); // @translate
+$citation .= '. ' . sprintf($translate('Viewed on %s'), date('Y-m-d')); // @translate
 
 echo $citation;
