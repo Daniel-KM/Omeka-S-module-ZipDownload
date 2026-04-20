@@ -412,7 +412,7 @@ class DownloadZip extends AbstractHelper
         // Search resources to calculate size and count.
         try {
             $resources = $api->search($resourceType, $query)->getContent();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return '';
         }
 

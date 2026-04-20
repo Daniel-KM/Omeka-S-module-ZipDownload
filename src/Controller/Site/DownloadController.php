@@ -62,7 +62,7 @@ class DownloadController extends AbstractActionController
         // Get the resource.
         try {
             $resource = $this->api()->read($resourceType, $resourceId)->getContent();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->notFoundAction();
         }
 
@@ -156,7 +156,7 @@ class DownloadController extends AbstractActionController
         try {
             $response = $this->api()->search($resourceType, $query);
             $resources = $response->getContent();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->notFoundAction();
         }
 
