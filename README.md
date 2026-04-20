@@ -74,12 +74,32 @@ Site settings allow to configure:
   Used when downloading multiple resources via API query.
 - Copyright text: Text included in a COPYRIGHT.txt file inside the zip, with
   placeholders:
-  - `{dcterms:creator}`, `{dcterms:date}` - Resource metadata (any property)
-  - `{file_count}`, `{resource_count}` - Counts
-  - `{citation}` - Auto-generated citation
-  - `{resource_id}`, `{resource_title}`, `{resource_url}` - Resource info
-  - `{site_title}`, `{site_url}`, `{main_title}` - Site/installation info
-  - `{date}`, `{datetime}` - Download date
+  - `{dcterms:creator}`, `{dcterms:date}`: Resource metadata (any property)
+  - `{file_count}`, `{resource_count}`: Counts
+  - `{citation}`: Auto-generated citation
+  - `{resource_id}`, `{resource_title}`, `{resource_url}`: Resource info
+  - `{site_title}`, `{site_url}`, `{main_title}`: Site/installation info
+  - `{date}`, `{datetime}`: Download date
+
+If `zipdownload_text` is empty, no `COPYRIGHT.txt` is added to the zip and the
+partials are not rendered.
+
+
+Copyright text rendering (theme partials)
+-----------------------------------------
+
+The `COPYRIGHT.txt` file added inside the zip is rendered through three phtml
+partials. Themes can override any of them to customize the layout:
+
+- `view/common/zip-download-copyright.phtml`: single resource download.
+- `view/common/zip-download-copyright-multiple.phtml`: batch (query) download.
+- `view/common/zip-download-citation.phtml`: bibliographic citation, included in
+  the `{citation}` placeholder of the two partials above.
+
+The default partials simply apply `strtr($zipdownloadText, $placeholders)`. A
+custom theme partial can mix the admin-configured text with hard-coded layout,
+or ignore the site setting entirely and produce the text from the provided
+variables.
 
 
 Resource page blocks
