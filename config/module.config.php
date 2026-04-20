@@ -77,9 +77,9 @@ return [
                 Date: {dcterms:date}
                 Number of files: {file_count}
                 Downloaded on: {date}
-                
+
                 Citation: {citation}
-                
+
                 URL: {resource_url}
                 TXT,
         ],

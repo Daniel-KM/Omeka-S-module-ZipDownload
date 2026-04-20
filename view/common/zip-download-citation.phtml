@@ -1,0 +1,43 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ * @var \Omeka\Api\Representation\SiteRepresentation|null $site
+ */
+
+$translate = $this->plugin('translate');
+
+$creators = $resource->value('dcterms:creator', ['all' => true]) ?: [];
+$creators = array_values(array_filter(array_map(
+    fn($v) => strip_tags((string) $v),
+    $creators
+)));
+
+$citation = '';
+if ($creators) {
+    $citation = match (count($creators)) {
+        1 => $creators[0],
+        2 => sprintf($translate('%1$s and %2$s'), $creators[0], $creators[1]), // @translate
+        3 => sprintf($translate('%1$s, %2$s and %3$s'), $creators[0], $creators[1], $creators[2]), // @translate
+        default => sprintf($translate('%s et al.'), $creators[0]), // @translate
+    };
+}
+
+$citation .= ($citation ? ', ' : '') . '« ' . $resource->displayTitle() . ' »';
+
+$publisher = $resource->value('dcterms:publisher');
+if ($publisher) {
+    $citation .= ', ' . strip_tags((string) $publisher);
+}
+
+$date = $resource->value('dcterms:date');
+if ($date) {
+    $citation .= ', ' . strip_tags((string) $date);
+}
+
+$url = $resource->siteUrl($site ? $site->slug() : null, true) ?: $resource->apiUrl();
+$citation .= ', ' . $url;
+
+$citation .= '. ' . sprintf($translate('Viewed le %s'), date('Y-m-d')); // @translate
+
+echo $citation;

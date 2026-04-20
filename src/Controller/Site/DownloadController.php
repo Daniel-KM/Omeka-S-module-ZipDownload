@@ -496,120 +496,69 @@ class DownloadController extends AbstractActionController
     }
 
     /**
-     * Build copyright text with placeholders.
+     * Build copyright text by rendering the copyright partial.
      */
     protected function buildCopyrightText($resource, array $medias, string $type): ?string
     {
-        $siteSettings = $this->siteSettings();
-        $template = $siteSettings->get('zipdownload_text', '');
-
-        if (empty($template)) {
+        $zipdownloadText = $this->siteSettings()->get('zipdownload_text', '');
+        if (!strlen(trim((string) $zipdownloadText))) {
             return null;
         }
 
-        $matches = [];
+        $placeholders = $this->buildPlaceholders($resource, $medias, $type, $zipdownloadText);
 
-        // Add site info.
+        $partial = $this->viewHelpers()->get('partial');
+        $text = (string) $partial('common/zip-download-copyright', [
+            'resource' => $resource,
+            'medias' => $medias,
+            'site' => $this->currentSite(),
+            'zipdownloadText' => $zipdownloadText,
+            'placeholders' => $placeholders,
+        ]);
+
+        return strlen(trim($text)) ? $text : null;
+    }
+
+    /**
+     * Build all placeholder values for a single resource copyright text.
+     */
+    protected function buildPlaceholders(
+        $resource,
+        array $medias,
+        string $type,
+        string $zipdownloadText
+    ): array {
         $site = $this->currentSite();
+        $settings = $this->settings();
+        $partial = $this->viewHelpers()->get('partial');
 
-        // Build placeholders.
         $placeholders = [
-            '{file_count}' => (string) count($medias),
+            '{main_title}' => $settings->get('installation_title', 'Omeka S'),
+            '{site_title}' => $site ? $site->title() : '',
+            '{site_url}' => $site ? $site->siteUrl(null, true) : '',
             '{resource_id}' => (string) $resource->id(),
             '{resource_title}' => $resource->displayTitle(),
             '{resource_url}' => $resource->siteUrl($site ? $site->slug() : null, true) ?: $resource->apiUrl(),
+            '{file_count}' => (string) count($medias),
             '{file_type}' => $type,
+            '{date}' => date('Y-m-d'),
+            '{datetime}' => date('Y-m-d H:i:s'),
+            '{citation}' => trim((string) $partial(
+                'common/zip-download-citation',
+                ['resource' => $resource, 'site' => $site]
+            )),
         ];
 
-        if ($site) {
-            $placeholders['{site_title}'] = $site->title();
-            $placeholders['{site_url}'] = $site->siteUrl(null, true);
-        }
-
-        // Add installation title.
-        $settings = $this->settings();
-        $placeholders['{main_title}'] = $settings->get('installation_title', 'Omeka S');
-
-        // Add date.
-        $placeholders['{date}'] = date('Y-m-d');
-        $placeholders['{datetime}'] = date('Y-m-d H:i:s');
-
-        // Add citation if available.
-        $placeholders['{citation}'] = $this->buildCitation($resource);
-
-        // Add property values from resource.
-        // Match patterns like {dcterms:creator}, {dcterms:date}, etc.
-        if (preg_match_all('/\{([a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+)\}/', $template, $matches)) {
+        // RDF property terms detected in the template text.
+        if (preg_match_all('/\{([a-zA-Z0-9_-]+:[a-zA-Z0-9_-]+)\}/', $zipdownloadText, $matches)) {
             foreach ($matches[1] as $term) {
                 $values = $resource->value($term, ['all' => true]) ?: [];
-                // ValueRepresentation objects must be cast to string before strip_tags.
                 $values = array_map(fn($v) => strip_tags((string) $v), $values);
                 $placeholders['{' . $term . '}'] = implode(', ', $values);
             }
         }
 
-        // Apply placeholders.
-        $text = strtr($template, $placeholders);
-
-        return $text;
-    }
-
-    /**
-     * Build citation text for a resource.
-     */
-    protected function buildCitation($resource): string
-    {
-        $translate = $this->plugin('translate');
-
-        $citation = '';
-
-        // Creator.
-        $creators = $resource->value('dcterms:creator', ['all' => true]) ?: [];
-        // ValueRepresentation objects must be cast to string before strip_tags.
-        $creators = array_values(array_filter(array_map(fn($v) => strip_tags((string) $v), $creators)));
-        if ($creators) {
-            switch (count($creators)) {
-                case 1:
-                    $creator = $creators[0];
-                    break;
-                case 2:
-                    $creator = sprintf($translate('%1$s and %2$s'), $creators[0], $creators[1]);
-                    break;
-                case 3:
-                    $creator = sprintf($translate('%1$s, %2$s, and %3$s'), $creators[0], $creators[1], $creators[2]);
-                    break;
-                default:
-                    $creator = sprintf($translate('%s et al.'), $creators[0]);
-                    break;
-            }
-            $citation .= $creator;
-        }
-
-        // Title.
-        $title = $resource->displayTitle();
-        $citation .= ($citation ? ', ' : '') . '"' . $title . '"';
-
-        // Publisher.
-        $publisher = $resource->value('dcterms:publisher');
-        if ($publisher) {
-            $citation .= ', ' . strip_tags((string) $publisher);
-        }
-
-        // Date.
-        $date = $resource->value('dcterms:date');
-        if ($date) {
-            $citation .= ', ' . strip_tags((string) $date);
-        }
-
-        // Url.
-        $site = $this->currentSite();
-        $url = $resource->siteUrl($site ? $site->slug() : null, true) ?: $resource->apiUrl();
-        $citation .= ', ' . $url;
-
-        // Access date.
-        $citation .= '. ' . sprintf($translate('Accessed on %s'), date('Y-m-d'));
-
-        return $citation;
+        return $placeholders;
     }
 
     /**
@@ -620,45 +569,46 @@ class DownloadController extends AbstractActionController
         array $medias,
         string $type
     ): ?string {
-        $siteSettings = $this->siteSettings();
-        $template = $siteSettings->get('zipdownload_text', '');
-
-        if (empty($template)) {
+        $zipdownloadText = $this->siteSettings()->get('zipdownload_text', '');
+        if (!strlen(trim((string) $zipdownloadText))) {
             return null;
         }
 
-        // Build placeholders.
-        $placeholders = [
+        $placeholders = $this->buildPlaceholdersQuery($resources, $medias, $type);
+
+        $partial = $this->viewHelpers()->get('partial');
+        $text = (string) $partial('common/zip-download-copyright-multiple', [
+            'resources' => $resources,
+            'medias' => $medias,
+            'site' => $this->currentSite(),
+            'zipdownloadText' => $zipdownloadText,
+            'placeholders' => $placeholders,
+        ]);
+
+        return strlen(trim($text)) ? $text : null;
+    }
+
+    /**
+     * Build placeholder values for a batch (query) copyright text.
+     */
+    protected function buildPlaceholdersQuery(
+        array $resources,
+        array $medias,
+        string $type
+    ): array {
+        $site = $this->currentSite();
+        $settings = $this->settings();
+
+        return [
+            '{main_title}' => $settings->get('installation_title', 'Omeka S'),
+            '{site_title}' => $site ? $site->title() : '',
+            '{site_url}' => $site ? $site->siteUrl(null, true) : '',
             '{file_count}' => (string) count($medias),
             '{resource_count}' => (string) count($resources),
             '{file_type}' => $type,
+            '{date}' => date('Y-m-d'),
+            '{datetime}' => date('Y-m-d H:i:s'),
         ];
-
-        // Add site info.
-        $site = $this->currentSite();
-        if ($site) {
-            $placeholders['{site_title}'] = $site->title();
-            $placeholders['{site_url}'] = $site->siteUrl(null, true);
-        }
-
-        // Add installation title.
-        $settings = $this->settings();
-        $placeholders['{main_title}'] = $settings->get('installation_title', 'Omeka S');
-
-        // Add date.
-        $placeholders['{date}'] = date('Y-m-d');
-        $placeholders['{datetime}'] = date('Y-m-d H:i:s');
-
-        // For batch download, resource-specific placeholders are not applicable.
-        $placeholders['{resource_id}'] = '';
-        $placeholders['{resource_title}'] = '';
-        $placeholders['{resource_url}'] = '';
-        $placeholders['{citation}'] = '';
-
-        // Apply placeholders.
-        $text = strtr($template, $placeholders);
-
-        return $text;
     }
 
     /**
