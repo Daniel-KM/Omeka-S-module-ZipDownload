@@ -96,7 +96,8 @@ class DownloadZip extends AbstractHelper
         // Check if resource has downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
         $hasCopyrightText = strlen(trim((string) $siteSetting('zipdownload_text', '')));
-        if (empty($medias) && !$hasCopyrightText) {
+        $hasAsset = (int) $siteSetting('zipdownload_asset');
+        if (empty($medias) && !$hasCopyrightText && !$hasAsset) {
             return '';
         }
 

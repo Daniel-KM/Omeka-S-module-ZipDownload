@@ -69,9 +69,10 @@ class DownloadController extends AbstractActionController
         // Get downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
 
-        // Allow empty medias when copyright text is configured (text-only zip).
+        // Allow empty medias when copyright text or asset is configured.
         $hasCopyrightText = strlen(trim((string) $this->siteSettings()->get('zipdownload_text', '')));
-        if (!$medias && !$hasCopyrightText) {
+        $hasAsset = (int) $this->siteSettings()->get('zipdownload_asset');
+        if (!$medias && !$hasCopyrightText && !$hasAsset) {
             return $this->notFoundAction();
         }
 
@@ -277,6 +278,9 @@ class DownloadController extends AbstractActionController
             );
         }
 
+        // Add configured asset (e.g. a presentation PDF).
+        $this->addAssetToZip($zip);
+
         // Add each media file (no compression, already compressed formats).
         foreach ($medias as $index => $media) {
             $filepath = $this->getMediaFilePath($media, $type);
@@ -359,6 +363,9 @@ class DownloadController extends AbstractActionController
             );
         }
 
+        // Add configured asset (e.g. a presentation PDF).
+        $this->addAssetToZip($zip);
+
         // Add each media file organized by resource.
         $resourceIndex = 0;
         $mediasByItem = [];
@@ -396,6 +403,35 @@ class DownloadController extends AbstractActionController
         ini_set('display_errors', '0');
 
         return $response;
+    }
+
+    /**
+     * Append the site-configured asset (if any) to the zip stream.
+     */
+    protected function addAssetToZip(ZipStream $zip): void
+    {
+        $assetId = (int) $this->siteSettings()->get('zipdownload_asset');
+        if (!$assetId) {
+            return;
+        }
+        try {
+            $asset = $this->api()->read('assets', $assetId)->getContent();
+        } catch (\Throwable $e) {
+            return;
+        }
+        $filename = $asset->filename();
+        if (!$filename) {
+            return;
+        }
+        $filepath = OMEKA_PATH . '/files/asset/' . $filename;
+        if (!file_exists($filepath)) {
+            return;
+        }
+        $name = $asset->name() ?: $filename;
+        $zip->addFileFromPath(
+            fileName: $this->sanitizeFilename($name) ?: $filename,
+            path: $filepath,
+        );
     }
 
     /**

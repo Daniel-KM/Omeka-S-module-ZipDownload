@@ -129,6 +129,18 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'zipdownload_asset',
+                'type' => OmekaElement\Asset::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'Asset to include in zip', // @translate
+                    'info' => 'Optional file (e.g. PDF presenting the institution) included in every generated zip.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_asset',
+                ],
+            ])
+            ->add([
                 'name' => 'zipdownload_text',
                 'type' => Element\Textarea::class,
                 'options' => [
