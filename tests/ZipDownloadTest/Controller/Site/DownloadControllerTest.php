@@ -183,4 +183,73 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         // No matching items: should return 404, not crash.
         $this->assertResponseStatusCode(404);
     }
+
+    /**
+     * Item without media but with a copyright text configured: the download
+     * endpoint must produce a zip containing only the copyright file.
+     */
+    public function testDownloadItemWithoutMediaButWithCopyrightTextReturnsZip(): void
+    {
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', true);
+        $siteSettings->set('zipdownload_text', 'Source: {main_title}');
+
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Notice-Only Item']],
+        ]);
+
+        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->assertResponseStatusCode(200);
+        $content = $this->getResponse()->getContent();
+        $this->assertNotEmpty($content, 'Zip content should not be empty.');
+        $this->assertStringStartsWith("PK", $content, 'Zip magic bytes expected.');
+    }
+
+    /**
+     * When zipdownload_text is empty AND no asset AND no media, still 404.
+     */
+    public function testDownloadItemWithoutMediaNoTextNoAssetReturns404(): void
+    {
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', true);
+        $siteSettings->set('zipdownload_text', '');
+        $siteSettings->set('zipdownload_asset', null);
+
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Empty Item']],
+        ]);
+
+        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * The copyright filename inside the zip is configurable via site setting.
+     */
+    public function testCopyrightFilenameCustomized(): void
+    {
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', true);
+        $siteSettings->set('zipdownload_text', 'Source: {main_title}');
+        $siteSettings->set('zipdownload_text_filename', 'LICENSE.txt');
+
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Custom Copyright']],
+        ]);
+
+        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->assertResponseStatusCode(200);
+
+        $tmp = tempnam(sys_get_temp_dir(), 'zdl');
+        file_put_contents($tmp, $this->getResponse()->getContent());
+        $zip = new \ZipArchive();
+        $this->assertTrue($zip->open($tmp) === true, 'Zip must open.');
+        $this->assertNotFalse($zip->locateName('LICENSE.txt'), 'Custom copyright filename expected.');
+        $this->assertFalse($zip->locateName('COPYRIGHT.txt'), 'Default filename must not appear.');
+        $zip->close();
+        @unlink($tmp);
+    }
 }
