@@ -1,74 +1,78 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-07-06 00:00+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-07-06 00:00+0000\n"
+"Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
+"Language-Team: br <LL@li.org>\n"
+"Language: br\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==1 ? 0 : n%10==1 && n%100!=11 && n%100!"
+"=71 && n%100!=91 ? 1 : n%10==2 && n%100!=12 && n%100!=72 && n%100!=92 ? 2 : "
+"(n%10==3 || n%10==4 || n%10==9) && n%100!=13 && n%100!=14 && n%100!=19 && "
+"n%100!=73 && n%100!=74 && n%100!=79 && n%100!=93 && n%100!=94 && n%100!=99 ? "
+"3 : n%1000000==0 ? 4 : 5);\n"
+"Generated-By: Babel 2.18.0\n"
+"X-Generator: Poedit 3.6\n"
 
 #: data/scripts/upgrade.php:33 Module.php:62
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
-msgstr ""
+msgstr "Ar modul %1$s a rank bezañ hizivaet d'ar stumm %2$s pe unan nevesoc'h."
 
 #: data/scripts/upgrade.php:37
 msgid "Missing requirement. Unable to upgrade."
-msgstr ""
+msgstr "Rekizadenn a vank. N'haller ket hizivaat."
 
 #: Module.php:70
 msgid ""
 "This module requires PHP 8.1 or later for zip streaming with ZipStream "
 "library."
 msgstr ""
+"Ezhomm en deus ar modul-mañ eus PHP 8.1 pe un doare nevesoc'h evit ar "
+"streaming zip gant al levraoueg ZipStream."
 
 #: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:411
 msgid "Download"
-msgstr ""
+msgstr "Pellgargañ"
 
 #: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:481
 msgid "Large"
-msgstr ""
+msgstr "Bras"
 
 #: src/View/Helper/DownloadZip.php:123 src/View/Helper/DownloadZip.php:483
 msgid "Square"
-msgstr ""
+msgstr "Karrez"
 
 #: view/common/resource-page-block-layout/download-primary-digital-object.phtml:50
 #: view/common/resource-page-block-layout/download-primary.phtml:21
 #, php-format
 msgid "Download file (%s)"
-msgstr ""
+msgstr "Pellgargañ ar restr (%s)"
 
 #: view/common/zip-download-citation.phtml:20
 #, php-format
 msgid "%1$s and %2$s"
-msgstr ""
+msgstr "%1$s ha %2$s"
 
 #: view/common/zip-download-citation.phtml:21
 #, php-format
 msgid "%1$s, %2$s and %3$s"
-msgstr ""
+msgstr "%1$s, %2$s ha %3$s"
 
 #: view/common/zip-download-citation.phtml:22
 #, php-format
 msgid "%s et al."
-msgstr ""
+msgstr "%s hag all."
 
 #: view/common/zip-download-citation.phtml:41
 #, php-format
 msgid "Viewed on %s"
-msgstr ""
+msgstr "Gwelet da %s"
 
 #: data/scripts/upgrade.php:52
 msgid ""
@@ -76,206 +80,246 @@ msgid ""
 "multiple types are selected, visitors can choose the format in the download "
 "dialog."
 msgstr ""
+"Bremañ e c'haller kefluniañ meur a seurt restroù da bellgargañ. Pa vez "
+"dibabet meur a seurt, e c'hall ar weladennerien dibab ar furmad er prenestr "
+"diviz pellgargañ."
 
 #: data/scripts/upgrade.php:59
 msgid ""
 "The copyright text included in the zip (COPYRIGHT.txt) is now rendered via "
 "customizable theme partials."
 msgstr ""
+"Ar skrid gwirioù aozer lakaet er zip (COPYRIGHT.txt) a vez diskwelet bremañ "
+"dre dammoù tem personelaus."
 
 #: data/scripts/upgrade.php:66
 msgid ""
 "An asset, for example a pdf presenting the institution, can now be attached "
 "to every generated zip via a new site setting."
 msgstr ""
+"Un elfenn, da skouer ur pdf a ginnig an ensavadur, a c'hall bremañ bezañ "
+"staget ouzh pep teuliad zip krouet dre un arventenn lec'hienn nevez."
 
 #: data/scripts/upgrade.php:71
 msgid ""
 "The filename of the copyright file inside the zip can now be customized via "
 "a new site setting."
 msgstr ""
+"Gallout a reer bremañ personelaat anv restr ar restr gwirioù aozer er zip "
+"dre un arventenn lec'hienn nevez."
 
 #: data/scripts/upgrade.php:76
 msgid "Dialog labels for file types are now customizable per site."
 msgstr ""
+"Labelennoù an divizoù evit seurtadoù ar restroù a c'haller personelaat "
+"bremañ dre lec'hienn."
 
 #: data/scripts/upgrade.php:81
 msgid "The {link}digital objects{link_end} are now supported."
-msgstr ""
+msgstr "Harpet eo bremañ an {link}objedoù niverel{link_end}."
 
 #: Module.php:86
 msgid ""
 "By default, the zip download is not allowed on sites. Enable it in the site "
 "settings of each site."
 msgstr ""
+"Dre ziouer, n'eo ket aotreet pellgargañ en stumm zip war al lec'hiennoù. "
+"Gweredekaat anezhañ e parañoù pep lec'hienn."
 
 #: view/common/zip-download-citation.phtml:41
 msgid "Y-m-d"
-msgstr ""
+msgstr "Bloaz, miz, deiz"
 
 #: src/View/Helper/DownloadZip.php:170
 msgid "Download notice: {filename}"
-msgstr ""
+msgstr "Kemenadenn pellgargañ: {filename}"
 
 #: src/View/Helper/DownloadZip.php:175
 msgid "Download file: {filename} ({size})"
-msgstr ""
+msgstr "Pellgargañ ar restr : {filename} ({size})"
 
 #: src/View/Helper/DownloadZip.php:182
 msgid "Download file: {filename}"
-msgstr ""
+msgstr "Pellgargañ ar restr : {filename}"
 
 #: src/View/Helper/DownloadZip.php:187
 msgid "Download {count} files as zip: {filename}"
-msgstr ""
+msgstr "Pellgargañ {count} restroù e stumm zip: {filename}"
 
 #: src/View/Helper/DownloadZip.php:193
 msgid "Download {count} files as zip: {filename} ({size})"
-msgstr ""
+msgstr "Pellgargañ {count} restroù e stumm zip: {filename} ({size})"
 
 #: src/View/Helper/DownloadZip.php:527
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename}"
 msgstr ""
+"Pellgargañ {file_count} restroù eus {resource_count} mammennoù e stumm zip : "
+"{filename}"
 
 #: src/View/Helper/DownloadZip.php:536
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename} ({size})"
 msgstr ""
+"Pellgargañ {file_count} restroù eus {resource_count} mammennoù e stumm zip: "
+"{filename} ({size})"
 
 #: src/Form/SiteSettingsFieldset.php:15 src/Form/SiteSettingsFieldset.php:18
 msgid "Zip Download"
-msgstr ""
+msgstr "Pellgargañ gant zip"
 
 #: src/Form/SiteSettingsFieldset.php:32
 msgid "Enable download zip"
-msgstr ""
+msgstr "Gweredekaat pellgargañ ar zip"
 
 #: src/Form/SiteSettingsFieldset.php:33
 msgid ""
 "Allow visitors to download resource files. When disabled, the download "
 "button is hidden and the download endpoint returns a 404 error."
 msgstr ""
+"Aotren ar weladennerien da bellgargañ restroù danvez. Pa vez diweredekaet, e "
+"vez kuzhet ar bouton pellgargañ hag e ro an teul pellgargañ ur fazi 404."
 
 #: src/Form/SiteSettingsFieldset.php:44
 msgid "Download content"
-msgstr ""
+msgstr "Pellgargañ an danvez"
 
 #: src/Form/SiteSettingsFieldset.php:46
 msgid "All media files (zip archive)"
-msgstr ""
+msgstr "An holl restroù media (diell zip)"
 
 #: src/Form/SiteSettingsFieldset.php:47
 msgid "Primary media only (single file, no zip)"
-msgstr ""
+msgstr "Media kentañ hepken (ur restr hepken, hep zip)"
 
 #: src/Form/SiteSettingsFieldset.php:59
 msgid "File types available for download"
-msgstr ""
+msgstr "Seurtoù restroù da bellgargañ"
 
 #: src/Form/SiteSettingsFieldset.php:60
 msgid ""
 "Select which file types visitors can download. If multiple types are "
 "selected, visitors will be able to choose in the download dialog."
 msgstr ""
+"Diuzit peseurt seurtadoù restroù a c'hall ar weladennerien pellgargañ. Ma "
+"vez diuzet meur a seurtad, e c'hallo ar weladennerien dibab er prenestr-"
+"diviz pellgargañ."
 
 #: src/Form/SiteSettingsFieldset.php:77
 msgid "File type labels in download dialog"
-msgstr ""
+msgstr "Labeloù seurt restroù er voest-diviz pellgargañ"
 
 #: src/Form/SiteSettingsFieldset.php:78
 msgid ""
 "Override the dialog labels for each file type, one per line as \"type = "
 "label\". Leave empty to use the default translated labels."
 msgstr ""
+"Rakreñvit etikedennoù ar boest diviz evit pep seurt restr, unan dre linenn e "
+"stumm \"seurt = etikedenn\". Lezit goullo evit implijout an etikedennoù "
+"troet dre ziouer."
 
 #: src/Form/SiteSettingsFieldset.php:95
 msgid "Output single file as native file"
-msgstr ""
+msgstr "Ezvevenn ur restr hepken evel ur restr genidik"
 
 #: src/Form/SiteSettingsFieldset.php:106
 msgid "Download element"
-msgstr ""
+msgstr "Pellgargañ elfenn"
 
 #: src/Form/SiteSettingsFieldset.php:107
 msgid ""
 "Use a button (default) to avoid scraping by bots, or a link for better "
 "accessibility."
 msgstr ""
+"Grit gant ur bouton (dre ziouer) evit mirout ouzh ar skraperezh gant ar "
+"botoù, pe ul liamm evit ur gwelloc'h hekwelusted."
 
 #: src/Form/SiteSettingsFieldset.php:109
 msgid "Button (recommended)"
-msgstr ""
+msgstr "Bouton (erbedet)"
 
 #: src/Form/SiteSettingsFieldset.php:110
 msgid "Link"
-msgstr ""
+msgstr "Liamm"
 
 #: src/Form/SiteSettingsFieldset.php:122
 msgid "Maximum resources for batch download"
-msgstr ""
+msgstr "Danvezioù d'ar muiañ evit pellgargañ a-stroll"
 
 #: src/Form/SiteSettingsFieldset.php:123
 msgid ""
 "Maximum number of resources that can be downloaded at once via query. Set 0 "
 "for no limit."
 msgstr ""
+"An niver brasañ a vammennoù a c'haller pellgargañ war un dro dre ur reked. "
+"Lakaat 0 evit kaout ul live didermen."
 
 #: src/Form/SiteSettingsFieldset.php:136
 msgid "Asset to include in zip"
-msgstr ""
+msgstr "Elfennoù da lakaat er zip"
 
 #: src/Form/SiteSettingsFieldset.php:137
 msgid ""
 "Optional file (e.g. PDF presenting the institution) included in every "
 "generated zip."
 msgstr ""
+"Restell zibarek (da sk. PDF a ginnig an ensavadur) e-barzh pep teuliad zip "
+"krouet."
 
 #: src/Form/SiteSettingsFieldset.php:148
 msgid "Name of the text file to add in the zip"
-msgstr ""
+msgstr "Anv ar restr testenn da ouzhpennañ er zip"
 
 #: src/Form/SiteSettingsFieldset.php:149
 msgid ""
 "This text usually contains the record, the url and the copyright. Default: "
 "COPYRIGHT.txt"
 msgstr ""
+"Er skrid-mañ e kaver peurliesañ an enrolladenn, an URL hag ar gwirioù aozer. "
+"Dre ziouer : COPYRIGHT.txt"
 
 #: src/Form/SiteSettingsFieldset.php:161
 msgid "Text of the file to add in the zip"
-msgstr ""
+msgstr "Testenn ar restr da ouzhpennañ er zip"
 
 #: src/Form/SiteSettingsFieldset.php:162
 msgid "This text usually contains the record, the url and the copyright."
 msgstr ""
+"Er skrid-mañ e kaver peurliesañ an enrolladenn, al liamm URL hag ar gwirioù "
+"aozer."
 
 #: src/Controller/Site/DownloadController.php:37
 msgid ""
 "Attempt to download zip for resource {resource_type} #{resource_id} on site "
 "\"{site}\" without download enabled."
 msgstr ""
+"Klask pellgargañ ar restr zip evit ar vammenn {resource_type} #{resource_id} "
+"war al lec'hienn \"{site}\" hep ma vefe aotreet ar pellgargañ."
 
 #: src/Controller/Site/DownloadController.php:103
 #: src/Controller/Site/DownloadController.php:192
 msgid "The ZipStream library is required to download multiple files as zip."
 msgstr ""
+"Ezhomm zo eus levraoueg ZipStream evit pellgargañ meur a restr e stumm zip."
 
 #: src/Controller/Site/DownloadController.php:127
 msgid ""
 "Attempt to download zip via query for {resource_type} on site \"{site}\" "
 "without download enabled."
 msgstr ""
+"Klask pellgargañ ur restr zip dre ur reked evit {resource_type} war al "
+"lec'hienn \"{site}\", hep ma vefe aotreet ar pellgargañ."
 
 #: src/Site/ResourcePageBlockLayout/DownloadPrimary.php:16
 msgid "Download primary media"
-msgstr ""
+msgstr "Pellgargañ ar media pennañ"
 
 #: src/Site/ResourcePageBlockLayout/DownloadPrimaryDigitalObject.php:21
 msgid "Download primary digital object"
-msgstr ""
+msgstr "Pellgargañ an objed niverel kentañ"
 
 #: src/Site/ResourcePageBlockLayout/DownloadZip.php:16
 msgid "Download zip"
-msgstr ""
+msgstr "Pellgargañ ar restr zip"

@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 00:00+0000\n"
-"PO-Revision-Date: 2026-04-06 00:00+0000\n"
+"POT-Creation-Date: 2026-07-06 00:00+0000\n"
+"PO-Revision-Date: 2026-07-06 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.6\n"
 
-#: data/scripts/upgrade.php:33 Module.php:58
+#: data/scripts/upgrade.php:33 Module.php:62
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
@@ -22,7 +22,7 @@ msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieur
 msgid "Missing requirement. Unable to upgrade."
 msgstr "Pré-requis absent. Impossible de mettre à jour."
 
-#: Module.php:66
+#: Module.php:70
 msgid ""
 "This module requires PHP 8.1 or later for zip streaming with ZipStream "
 "library."
@@ -30,18 +30,19 @@ msgstr ""
 "Ce module nécessite PHP 8.1 ou une version ultérieure pour la création en "
 "temps réel de fichiers zip via la bibliothèque ZipStream."
 
-#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:379
+#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:411
 msgid "Download"
 msgstr "Télécharger"
 
-#: src/View/Helper/DownloadZip.php:119 src/View/Helper/DownloadZip.php:449
+#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:481
 msgid "Large"
 msgstr "Large"
 
-#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:451
+#: src/View/Helper/DownloadZip.php:123 src/View/Helper/DownloadZip.php:483
 msgid "Square"
 msgstr "Carré"
 
+#: view/common/resource-page-block-layout/download-primary-digital-object.phtml:50
 #: view/common/resource-page-block-layout/download-primary.phtml:21
 #, php-format
 msgid "Download file (%s)"
@@ -85,27 +86,65 @@ msgstr ""
 "Le texte de copyright inclus dans le zip (COPYRIGHT.txt) est désormais "
 "personnalisable via le thème."
 
+#: data/scripts/upgrade.php:66
+msgid ""
+"An asset, for example a pdf presenting the institution, can now be attached "
+"to every generated zip via a new site setting."
+msgstr ""
+"Un fichier, par exemple un pdf présentant l’institution, peut désormais être "
+"attaché à chaque zip créé via un nouveau paramètre de site."
+
+#: data/scripts/upgrade.php:71
+msgid ""
+"The filename of the copyright file inside the zip can now be customized via "
+"a new site setting."
+msgstr ""
+"Le nom du fichier copyright inclus dans le zip peut désormais être "
+"personnalisé avec un nouveau paramètre de site."
+
+#: data/scripts/upgrade.php:76
+msgid "Dialog labels for file types are now customizable per site."
+msgstr ""
+"Les libellés par type de fichier pour le dialogue sont désormais "
+"personnalisable par site."
+
+#: data/scripts/upgrade.php:81
+msgid "The {link}digital objects{link_end} are now supported."
+msgstr "Les {link}objets numériques{link_end} sont désormais pris en charge."
+
+#: Module.php:86
+msgid ""
+"By default, the zip download is not allowed on sites. Enable it in the site "
+"settings of each site."
+msgstr ""
+"Par défaut, le téléchargement des zips n’est pas autorisé pour les sites. Il "
+"convient de l’activer pour chaque site."
+
 #: view/common/zip-download-citation.phtml:41
 msgid "Y-m-d"
 msgstr "Y-m-d"
 
-#: src/View/Helper/DownloadZip.php:165
+#: src/View/Helper/DownloadZip.php:170
+msgid "Download notice: {filename}"
+msgstr "Télécharger la notice : {filename}"
+
+#: src/View/Helper/DownloadZip.php:175
 msgid "Download file: {filename} ({size})"
 msgstr "Télécharger le fichier : {filename} ({size})"
 
-#: src/View/Helper/DownloadZip.php:172
+#: src/View/Helper/DownloadZip.php:182
 msgid "Download file: {filename}"
 msgstr "Télécharger le fichier : {filename}"
 
-#: src/View/Helper/DownloadZip.php:177
+#: src/View/Helper/DownloadZip.php:187
 msgid "Download {count} files as zip: {filename}"
 msgstr "Télécharger {count} fichiers en zip : {filename}"
 
-#: src/View/Helper/DownloadZip.php:183
+#: src/View/Helper/DownloadZip.php:193
 msgid "Download {count} files as zip: {filename} ({size})"
 msgstr "Télécharger {count} fichiers en zip : {filename} ({size})"
 
-#: src/View/Helper/DownloadZip.php:495
+#: src/View/Helper/DownloadZip.php:527
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename}"
@@ -113,7 +152,7 @@ msgstr ""
 "Télécharger {file_count} fichiers de {resource_count} ressources en zip : "
 "{filename}"
 
-#: src/View/Helper/DownloadZip.php:504
+#: src/View/Helper/DownloadZip.php:536
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename} ({size})"
@@ -212,10 +251,38 @@ msgstr ""
 "requête. Indiquez 0 pour ne pas limiter."
 
 #: src/Form/SiteSettingsFieldset.php:136
-msgid "Copyright text"
-msgstr "Mention de copyright"
+msgid "Asset to include in zip"
+msgstr "Fichier à inclure dans le zip"
 
-#: src/Controller/Site/DownloadController.php:36
+#: src/Form/SiteSettingsFieldset.php:137
+msgid ""
+"Optional file (e.g. PDF presenting the institution) included in every "
+"generated zip."
+msgstr ""
+"Fichier (par exemple un pdf présentant l’institution) inclus dans chaque "
+"fichier zip."
+
+#: src/Form/SiteSettingsFieldset.php:148
+msgid "Name of the text file to add in the zip"
+msgstr "Nom du fichier texte à ajouter dans le zip"
+
+#: src/Form/SiteSettingsFieldset.php:149
+msgid ""
+"This text usually contains the record, the url and the copyright. Default: "
+"COPYRIGHT.txt"
+msgstr ""
+"Ce texte contient généralement la notice, l’url et le copyright. Défaut : "
+"COPYRIGHT.txt"
+
+#: src/Form/SiteSettingsFieldset.php:161
+msgid "Text of the file to add in the zip"
+msgstr "Texte du fichier à ajouter dans le zip"
+
+#: src/Form/SiteSettingsFieldset.php:162
+msgid "This text usually contains the record, the url and the copyright."
+msgstr "Ce texte contient généralement la notice, l’url et le copyright."
+
+#: src/Controller/Site/DownloadController.php:37
 msgid ""
 "Attempt to download zip for resource {resource_type} #{resource_id} on site "
 "\"{site}\" without download enabled."
@@ -224,14 +291,14 @@ msgstr ""
 "#{resource_id} sur le site « {site} » alors que le téléchargement n’est pas "
 "activé."
 
-#: src/Controller/Site/DownloadController.php:94
-#: src/Controller/Site/DownloadController.php:183
+#: src/Controller/Site/DownloadController.php:103
+#: src/Controller/Site/DownloadController.php:192
 msgid "The ZipStream library is required to download multiple files as zip."
 msgstr ""
 "La bibliothèque ZipStream est nécessaire pour télécharger plusieurs fichiers "
 "au format zip."
 
-#: src/Controller/Site/DownloadController.php:118
+#: src/Controller/Site/DownloadController.php:127
 msgid ""
 "Attempt to download zip via query for {resource_type} on site \"{site}\" "
 "without download enabled."
@@ -243,9 +310,16 @@ msgstr ""
 msgid "Download primary media"
 msgstr "Télécharger le média principal"
 
+#: src/Site/ResourcePageBlockLayout/DownloadPrimaryDigitalObject.php:21
+msgid "Download primary digital object"
+msgstr "Télécharger le premier objet numérique"
+
 #: src/Site/ResourcePageBlockLayout/DownloadZip.php:16
 msgid "Download zip"
 msgstr "Télécharger le zip"
+
+#~ msgid "Copyright text"
+#~ msgstr "Mention de copyright"
 
 #, php-format
 #~ msgid "Consulté le %s"
