@@ -489,22 +489,17 @@ class DownloadController extends AbstractActionController
         string $type,
         ?MediaRepresentation $media = null
     ): string {
-        $title = $resource->displayTitle();
-        // Sanitize filename.
-        $title = preg_replace('/[^a-zA-Z0-9_\-\.\s]/', '', $title);
-        $title = preg_replace('/\s+/', '_', $title);
-        $title = substr($title, 0, 100);
+        $title = $this->sanitizeFilename($resource->displayTitle());
 
         if ($isSingleFile && $media) {
-            if ($type === 'original') {
-                $extension = pathinfo($media->filename(), PATHINFO_EXTENSION);
-            } else {
-                $extension = 'jpg';
-            }
+            $extension = $type === 'original'
+                ? pathinfo($media->filename(), PATHINFO_EXTENSION)
+                : 'jpg';
+            $title = $this->stripExtension($title, $extension);
             return $title . '.' . $extension;
         }
 
-        return $title . '.zip';
+        return $this->stripExtension($title, 'zip') . '.zip';
     }
 
     /**
@@ -515,20 +510,28 @@ class DownloadController extends AbstractActionController
         string $type,
         int $index
     ): string {
-        $title = $media->displayTitle();
-        // Sanitize filename.
-        $title = preg_replace('/[^a-zA-Z0-9_\-\.\s]/', '', $title);
-        $title = preg_replace('/\s+/', '_', $title);
-        $title = substr($title, 0, 80);
-
-        if ($type === 'original') {
-            $extension = pathinfo($media->filename(), PATHINFO_EXTENSION);
-        } else {
-            $extension = 'jpg';
-        }
-
-        // Add index to avoid filename conflicts.
+        $title = substr($this->sanitizeFilename($media->displayTitle()), 0, 80);
+        $extension = $type === 'original'
+            ? pathinfo($media->filename(), PATHINFO_EXTENSION)
+            : 'jpg';
+        $title = $this->stripExtension($title, $extension);
         return sprintf('%02d_%s.%s', $index + 1, $title, $extension);
+    }
+
+    /**
+     * Remove a trailing extension from a filename when it matches the target,
+     * so we do not build "foo.jpeg.jpeg".
+     */
+    protected function stripExtension(string $name, string $extension): string
+    {
+        if ($extension === '') {
+            return $name;
+        }
+        $suffix = '.' . $extension;
+        if (strcasecmp(substr($name, -strlen($suffix)), $suffix) === 0) {
+            $name = substr($name, 0, -strlen($suffix));
+        }
+        return $name === '' ? 'file' : $name;
     }
 
     /**
@@ -652,6 +655,15 @@ class DownloadController extends AbstractActionController
      */
     protected function sanitizeFilename(string $name): string
     {
+        if ($name !== '' && preg_match('//u', $name) && class_exists(\Transliterator::class)) {
+            $tr = \Transliterator::create('Any-Latin; Latin-ASCII; [:Nonspacing Mark:] Remove; NFC');
+            if ($tr) {
+                $translit = $tr->transliterate($name);
+                if (is_string($translit) && $translit !== '') {
+                    $name = $translit;
+                }
+            }
+        }
         $name = preg_replace('/[^a-zA-Z0-9_\-\.\s]/', '', $name);
         $name = preg_replace('/\s+/', '_', $name);
         return substr($name, 0, 100) ?: 'download';
