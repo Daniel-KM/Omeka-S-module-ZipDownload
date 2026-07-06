@@ -84,6 +84,20 @@ Site settings allow to configure:
 If `zipdownload_text` is empty, no `COPYRIGHT.txt` is added to the zip and the
 partials are not rendered.
 
+- File type labels: Override the dialog labels for each file type, one
+  `type = label` per line (key-value array). Empty values fall back to the
+  default translated labels (`Original`, `Large`, `Medium`, `Square`).
+- Asset to include in zip: Optional Omeka asset (e.g. a PDF presenting the
+  institution) appended to every generated zip. The filename inside the zip is
+  the asset original name (sanitized).
+- Copyright filename in zip: Override the filename of the copyright text inside
+  the zip. Default: `COPYRIGHT.txt`.
+
+When `zipdownload_text` and `zipdownload_asset` are both empty and the resource
+has no downloadable file, no download button is displayed. Configuring either
+one makes the button available for resources without media: the zip then
+contains only the copyright file and/or the asset.
+
 
 Copyright text rendering (theme partials)
 -----------------------------------------
@@ -100,6 +114,19 @@ The default partials simply apply `strtr($zipdownloadText, $placeholders)`. A
 custom theme partial can mix the admin-configured text with hard-coded layout,
 or ignore the site setting entirely and produce the text from the provided
 variables.
+
+
+IIIF Server integration
+-----------------------
+
+When the module [IiifServer] is installed, its config option "Add a rendering
+link to download all files as zip" injects a manifest-level `rendering` entry
+(`type: Dataset`, `format: application/zip`) pointing to this module zip
+endpoint. IIIF viewers that expose renderings (Mirador, UniversalViewer, etc.)
+will then offer a "Download all files as zip" link.
+
+Requirements: `zipdownload_enabled` must be true on the site used to build the
+manifest (the default site of the resource).
 
 
 Resource page blocks
@@ -244,6 +271,7 @@ This module was designed for [Explore PSL] and [Musée de Bretagne].
 [Common]: https://gitlab.com/Daniel-KM/Omeka-S-module-Common
 [ZipDownload.zip]: https://gitlab.com/Daniel-KM/Omeka-S-module-ZipDownload/-/releases
 [Block Plus]: https://gitlab.com/Daniel-KM/Omeka-S-module-BlockPlus
+[IiifServer]: https://gitlab.com/Daniel-KM/Omeka-S-module-IiifServer
 [module issues]: https://gitlab.com/Daniel-KM/Omeka-S-module-ZipDownload/-/issues
 [CeCILL v2.1]: https://www.cecill.info/licences/Licence_CeCILL_V2.1-en.html
 [GNU/GPL]: https://www.gnu.org/licenses/gpl-3.0.html
