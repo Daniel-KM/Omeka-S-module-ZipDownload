@@ -141,11 +141,25 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'zipdownload_text_filename',
+                'type' => Element\Text::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'Name of the text file to add in the zip', // @translate
+                    'info' => 'This text usually contains the record, the url and the copyright. Default: COPYRIGHT.txt', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_text_filename',
+                    'placeholder' => 'COPYRIGHT.txt',
+                ],
+            ])
+            ->add([
                 'name' => 'zipdownload_text',
                 'type' => Element\Textarea::class,
                 'options' => [
                     'element_group' => 'zip_download',
-                    'label' => 'Copyright text', // @translate
+                    'label' => 'Text of the file to add in the zip', // @translate
+                    'info' => 'This text usually contains the record, the url and the copyright.', // @translate
                 ],
                 'attributes' => [
                     'id' => 'zipdownload_text',
@@ -157,9 +171,9 @@ class SiteSettingsFieldset extends Fieldset
                         Date: {dcterms:date}
                         Number of files: {file_count}
                         Downloaded on: {date}
-                        
+
                         Citation: {citation}
-                        
+
                         URL: {resource_url}
                         TXT,
                 ],

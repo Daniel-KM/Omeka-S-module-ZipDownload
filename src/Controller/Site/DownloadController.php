@@ -232,6 +232,7 @@ class DownloadController extends AbstractActionController
 
         // Get copyright text.
         $copyrightText = $this->buildCopyrightText($resource, $medias, $type);
+        $copyrightFilename = $this->getCopyrightFilename();
 
         // Get response and set headers.
         /** @var \Laminas\Http\PhpEnvironment\Response $response */
@@ -272,7 +273,7 @@ class DownloadController extends AbstractActionController
         // Add copyright file if configured (use DEFLATE for text).
         if ($copyrightText) {
             $zip->addFile(
-                fileName: 'COPYRIGHT.txt',
+                fileName: $copyrightFilename,
                 data: $copyrightText,
                 compressionMethod: CompressionMethod::DEFLATE,
             );
@@ -318,6 +319,7 @@ class DownloadController extends AbstractActionController
 
         // Get copyright text for batch download.
         $copyrightText = $this->buildCopyrightTextQuery($resources, $medias, $type);
+        $copyrightFilename = $this->getCopyrightFilename();
 
         // Get response and set headers.
         /** @var \Laminas\Http\PhpEnvironment\Response $response */
@@ -357,7 +359,7 @@ class DownloadController extends AbstractActionController
         // Add copyright file if configured.
         if ($copyrightText) {
             $zip->addFile(
-                fileName: 'COPYRIGHT.txt',
+                fileName: $copyrightFilename,
                 data: $copyrightText,
                 compressionMethod: CompressionMethod::DEFLATE,
             );
@@ -403,6 +405,15 @@ class DownloadController extends AbstractActionController
         ini_set('display_errors', '0');
 
         return $response;
+    }
+
+    /**
+     * Get the configured filename for the copyright text inside the zip.
+     */
+    protected function getCopyrightFilename(): string
+    {
+        $name = trim((string) $this->siteSettings()->get('zipdownload_text_filename', ''));
+        return $name !== '' ? $this->sanitizeFilename($name) : 'COPYRIGHT.txt';
     }
 
     /**
