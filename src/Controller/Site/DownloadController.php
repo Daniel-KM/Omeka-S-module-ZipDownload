@@ -4,6 +4,7 @@ namespace ZipDownload\Controller\Site;
 
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
 use ZipStream\CompressionMethod;
@@ -44,7 +45,7 @@ class DownloadController extends AbstractActionController
         }
 
         // Validate resource type (singular in route, plural for api).
-        $validTypes = ['item', 'media'];
+        $validTypes = ['item', 'media', 'digital-object'];
         if (!in_array($resourceType, $validTypes)) {
             return $this->notFoundAction();
         }
@@ -200,7 +201,7 @@ class DownloadController extends AbstractActionController
      * Stream a single file directly.
      */
     protected function streamSingleFile(
-        MediaRepresentation $media,
+        AbstractResourceEntityRepresentation $media,
         string $type,
         $resource
     ): HttpResponse {
@@ -452,7 +453,10 @@ class DownloadController extends AbstractActionController
     {
         $medias = [];
 
-        if ($resource instanceof MediaRepresentation) {
+        $isDo = $resource instanceof AbstractResourceEntityRepresentation
+            && $resource->resourceName() === 'digital_objects';
+
+        if ($resource instanceof MediaRepresentation || $isDo) {
             if ($resource->hasOriginal()) {
                 $medias[] = $resource;
             }
@@ -468,6 +472,26 @@ class DownloadController extends AbstractActionController
                         $medias[] = $media;
                     }
                 }
+                // Also collect digital objects referenced by the item via
+                // property values (the parent-link DOs use since they have no
+                // item FK).
+                $seen = [];
+                foreach ($resource->values() as $property) {
+                    foreach ($property['values'] as $value) {
+                        $vr = $value->valueResource();
+                        if (!$vr || $vr->resourceName() !== 'digital_objects') {
+                            continue;
+                        }
+                        $id = $vr->id();
+                        if (isset($seen[$id])) {
+                            continue;
+                        }
+                        $seen[$id] = true;
+                        if ($vr->hasOriginal()) {
+                            $medias[] = $vr;
+                        }
+                    }
+                }
             }
         }
 
@@ -477,7 +501,7 @@ class DownloadController extends AbstractActionController
     /**
      * Get file path for a media.
      */
-    protected function getMediaFilePath(MediaRepresentation $media, string $type): ?string
+    protected function getMediaFilePath(AbstractResourceEntityRepresentation $media, string $type): ?string
     {
         $basePath = OMEKA_PATH . '/files/';
 
@@ -498,7 +522,7 @@ class DownloadController extends AbstractActionController
         $resource,
         bool $isSingleFile,
         string $type,
-        ?MediaRepresentation $media = null
+        ?AbstractResourceEntityRepresentation $media = null
     ): string {
         $title = $this->sanitizeFilename($resource->displayTitle());
 
@@ -517,7 +541,7 @@ class DownloadController extends AbstractActionController
      * Build filename for a media inside the zip.
      */
     protected function buildMediaFilename(
-        MediaRepresentation $media,
+        AbstractResourceEntityRepresentation $media,
         string $type,
         int $index
     ): string {

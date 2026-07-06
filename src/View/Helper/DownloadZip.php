@@ -132,7 +132,10 @@ class DownloadZip extends AbstractHelper
 
         // Build data for each available type.
         $resourceRouteParams = [
-            'resource-type' => $resource->resourceName() === 'media' ? 'media' : 'item',
+            'resource-type' => [
+                'media' => 'media',
+                'digital_objects' => 'digital-object',
+            ][$resource->resourceName()] ?? 'item',
             'resource-id' => $resource->id(),
         ];
         $typesData = [];
@@ -225,7 +228,10 @@ class DownloadZip extends AbstractHelper
     ): array {
         $medias = [];
 
-        if ($resource instanceof MediaRepresentation) {
+        $isDo = $resource instanceof AbstractResourceEntityRepresentation
+            && $resource->resourceName() === 'digital_objects';
+
+        if ($resource instanceof MediaRepresentation || $isDo) {
             if ($resource->hasOriginal()) {
                 $medias[] = $resource;
             }
@@ -239,6 +245,25 @@ class DownloadZip extends AbstractHelper
                 foreach ($resource->media() as $media) {
                     if ($media->hasOriginal()) {
                         $medias[] = $media;
+                    }
+                }
+                // Also collect digital objects referenced by the item via
+                // property values (autonomous, no item FK).
+                $seen = [];
+                foreach ($resource->values() as $property) {
+                    foreach ($property['values'] as $value) {
+                        $vr = $value->valueResource();
+                        if (!$vr || $vr->resourceName() !== 'digital_objects') {
+                            continue;
+                        }
+                        $id = $vr->id();
+                        if (isset($seen[$id])) {
+                            continue;
+                        }
+                        $seen[$id] = true;
+                        if ($vr->hasOriginal()) {
+                            $medias[] = $vr;
+                        }
                     }
                 }
             }
@@ -265,7 +290,7 @@ class DownloadZip extends AbstractHelper
     /**
      * Get file size for a media.
      */
-    protected function getMediaFileSize(MediaRepresentation $media, string $type): int
+    protected function getMediaFileSize(AbstractResourceEntityRepresentation $media, string $type): int
     {
         $basePath = OMEKA_PATH . '/files/';
 
@@ -306,7 +331,7 @@ class DownloadZip extends AbstractHelper
         AbstractResourceEntityRepresentation $resource,
         bool $isSingleFile,
         string $type,
-        ?MediaRepresentation $media = null
+        ?AbstractResourceEntityRepresentation $media = null
     ): string {
         $title = $resource->displayTitle();
         $title = $this->slugify($title);
