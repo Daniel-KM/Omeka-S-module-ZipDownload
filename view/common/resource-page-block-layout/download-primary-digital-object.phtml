@@ -1,0 +1,55 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Omeka\Api\Representation\AbstractResourceEntityRepresentation $resource
+ */
+
+/**
+ * Resolve the first downloadable digital object: the resource itself when it is
+ * a DO, otherwise the first DO referenced by the item via property values.
+ */
+$do = null;
+if ($resource->resourceName() === 'digital_objects') {
+    if ($resource->hasOriginal()) {
+        $do = $resource;
+    }
+} elseif ($resource->resourceName() === 'items') {
+    $seen = [];
+    foreach ($resource->values() as $property) {
+        foreach ($property['values'] as $value) {
+            $vr = $value->valueResource();
+            if (!$vr || $vr->resourceName() !== 'digital_objects') {
+                continue;
+            }
+            $id = $vr->id();
+            if (isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
+            if ($vr->hasOriginal()) {
+                $do = $vr;
+                break 2;
+            }
+        }
+    }
+}
+
+if (!$do) return;
+
+$plugins = $this->getHelperPluginManager();
+$translate = $plugins->get('translate');
+$escapeAttr = $plugins->get('escapeHtmlAttr');
+
+$sizeUnit = function (int $size) use ($translate): string {
+    $sizes = ['Bytes', 'kB', 'MB', 'GB', 'TB'];
+    for ($i = 0; $size > 1000 && $i < count($sizes) - 1; $i++) $size /= 1000;
+    return sprintf('%1$s %2$s', number_format($size, 0, ',', ' '), $translate($sizes[$i]));
+};
+
+$size = (int) $do->size();
+$title = $escapeAttr(sprintf($translate('Download file (%s)'), $sizeUnit($size)));
+?>
+
+<a class="button link-original download-file" title="<?= $title ?>" aria-label="<?= $title ?>" href="<?= $escapeAttr($do->originalUrl()) ?>" download="<?= $escapeAttr(basename((string) $do->source())) ?>" target="_self">
+    <span class="button-download o-icon- fa fa-download"></span>
+</a>

@@ -49,6 +49,7 @@ return [
     'resource_page_block_layouts' => [
         'invokables' => [
             'downloadPrimary' => Site\ResourcePageBlockLayout\DownloadPrimary::class,
+            'downloadPrimaryDigitalObject' => Site\ResourcePageBlockLayout\DownloadPrimaryDigitalObject::class,
             'downloadZip' => Site\ResourcePageBlockLayout\DownloadZip::class,
         ],
     ],

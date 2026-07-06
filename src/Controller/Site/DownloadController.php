@@ -475,27 +475,40 @@ class DownloadController extends AbstractActionController
                 // Also collect digital objects referenced by the item via
                 // property values (the parent-link DOs use since they have no
                 // item FK).
-                $seen = [];
-                foreach ($resource->values() as $property) {
-                    foreach ($property['values'] as $value) {
-                        $vr = $value->valueResource();
-                        if (!$vr || $vr->resourceName() !== 'digital_objects') {
-                            continue;
-                        }
-                        $id = $vr->id();
-                        if (isset($seen[$id])) {
-                            continue;
-                        }
-                        $seen[$id] = true;
-                        if ($vr->hasOriginal()) {
-                            $medias[] = $vr;
-                        }
+                foreach ($this->iterateItemDigitalObjects($resource) as $vr) {
+                    if ($vr->hasOriginal()) {
+                        $medias[] = $vr;
                     }
                 }
             }
         }
 
         return $medias;
+    }
+
+    /**
+     * Iterate digital objects referenced by an item via property values,
+     * deduplicated by id.
+     *
+     * @return iterable<AbstractResourceEntityRepresentation>
+     */
+    protected function iterateItemDigitalObjects(ItemRepresentation $item): iterable
+    {
+        $seen = [];
+        foreach ($item->values() as $property) {
+            foreach ($property['values'] as $value) {
+                $vr = $value->valueResource();
+                if (!$vr || $vr->resourceName() !== 'digital_objects') {
+                    continue;
+                }
+                $id = $vr->id();
+                if (isset($seen[$id])) {
+                    continue;
+                }
+                $seen[$id] = true;
+                yield $vr;
+            }
+        }
     }
 
     /**

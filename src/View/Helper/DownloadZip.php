@@ -432,7 +432,7 @@ class DownloadZip extends AbstractHelper
         $resourceType = $easyMeta->resourceName($resourceType);
 
         // Validate resource type.
-        if (!in_array($resourceType, ['items', 'media'])) {
+        if (!in_array($resourceType, ['items', 'media', 'digital_objects'])) {
             return '';
         }
 
