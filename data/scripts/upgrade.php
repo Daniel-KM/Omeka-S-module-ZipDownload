@@ -60,3 +60,27 @@ if (version_compare((string) $oldVersion, '3.4.4', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare((string) $oldVersion, '3.4.5', '<')) {
+    $message = new PsrMessage(
+        'An asset, for example a pdf presenting the institution, can now be attached to every generated zip via a new site setting.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'The filename of the copyright file inside the zip can now be customized via a new site setting.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'Dialog labels for file types are now customizable per site.' // @translate
+    );
+    $messenger->addSuccess($message);
+
+    $message = new PsrMessage(
+        'The {link}digital objects{link_end} are now supported.', // @translate
+        ['link' => '<a href="https://gitlab.com/Daniel-KM/Omeka-S-module-DigitalObject">', 'link_end' => '</a>']
+    );
+    $message->setEscapeHtml(false);
+    $messenger->addSuccess($message);
+}

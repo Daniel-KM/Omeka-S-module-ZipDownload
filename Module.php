@@ -77,6 +77,17 @@ class Module extends AbstractModule
         }
     }
 
+    protected function postInstall(): void
+    {
+        $services = $this->getServiceLocator();
+        $messenger = $services->get('ControllerPluginManager')->get('messenger');
+        $urlHelper = $services->get('ViewHelperManager')->get('url');
+        $message = new PsrMessage(
+            'By default, the zip download is not allowed on sites. Enable it in the site settings of each site.' // @translate
+        );
+        $messenger->addWarning($message);
+    }
+
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
         $sharedEventManager->attach(
