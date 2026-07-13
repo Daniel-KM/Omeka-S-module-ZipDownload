@@ -262,6 +262,13 @@ class DownloadController extends AbstractActionController
             ob_end_clean();
         }
 
+        // A large archive may stream for a long time over a slow connection;
+        // lift PHP's execution time limit so the download is not killed
+        // mid-stream. Memory stays flat (ZipStream streams each file).
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
         // Stream the zip using ZipStream.
         // Use STORE (no compression) by default since media files (images,
         // pdf, video) are already compressed.
@@ -347,6 +354,13 @@ class DownloadController extends AbstractActionController
         $response->setContent('');
         while (ob_get_level()) {
             ob_end_clean();
+        }
+
+        // A large archive may stream for a long time over a slow connection;
+        // lift PHP's execution time limit so the download is not killed
+        // mid-stream. Memory stays flat (ZipStream streams each file).
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
         }
 
         // Stream the zip using ZipStream.
