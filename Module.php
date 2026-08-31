@@ -12,6 +12,7 @@ if (!trait_exists(\Common\TraitModule::class, false)) {
     }
 }
 
+use Common\Stdlib\PsrMessage;
 use Common\TraitModule;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ModuleManager\ModuleManager;
