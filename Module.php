@@ -2,6 +2,12 @@
 
 namespace ZipDownload;
 
+// Load the module dependencies when installed as a zip.
+// With composer, libraries are stored in omeka vendor/ and the module has none.
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
+
 if (!trait_exists(\Common\TraitModule::class, false)) {
     if (file_exists(OMEKA_PATH . '/modules/Common/src/TraitModule.php')) {
         require_once OMEKA_PATH . '/modules/Common/src/TraitModule.php';
@@ -32,11 +38,6 @@ class Module extends AbstractModule
     use TraitModule;
 
     const NAMESPACE = __NAMESPACE__;
-
-    public function init(ModuleManager $moduleManager): void
-    {
-        require_once __DIR__ . '/vendor/autoload.php';
-    }
 
     public function onBootstrap(MvcEvent $event): void
     {
