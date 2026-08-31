@@ -82,7 +82,7 @@ class Module extends AbstractModule
 
         if (PHP_VERSION_ID < 80100) {
             $message = new \Omeka\Stdlib\Message(
-                $translator->translate('This module requires PHP 8.1 or later for zip streaming with ZipStream library.') // @translate
+                $translator->translate('This module requires PHP 8.1 or later.') // @translate
             );
             $errors[] = (string) $message;
         }
