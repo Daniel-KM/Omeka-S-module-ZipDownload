@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-06 00:00+0000\n"
-"PO-Revision-Date: 2026-07-06 00:00+0000\n"
+"POT-Creation-Date: 2026-08-31 00:00+0000\n"
+"PO-Revision-Date: 2026-08-31 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.6\n"
 
-#: data/scripts/upgrade.php:33 Module.php:62
+#: data/scripts/upgrade.php:33 Module.php:77
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
@@ -22,13 +22,9 @@ msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieur
 msgid "Missing requirement. Unable to upgrade."
 msgstr "Pré-requis absent. Impossible de mettre à jour."
 
-#: Module.php:70
-msgid ""
-"This module requires PHP 8.1 or later for zip streaming with ZipStream "
-"library."
-msgstr ""
-"Ce module nécessite PHP 8.1 ou une version ultérieure pour la création en "
-"temps réel de fichiers zip via la bibliothèque ZipStream."
+#: Module.php:85
+msgid "This module requires PHP 8.1 or later."
+msgstr "Ce module nécessite PHP 8.1 ou une version ultérieure."
 
 #: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:411
 msgid "Download"
@@ -112,7 +108,7 @@ msgstr ""
 msgid "The {link}digital objects{link_end} are now supported."
 msgstr "Les {link}objets numériques{link_end} sont désormais pris en charge."
 
-#: Module.php:86
+#: Module.php:101
 msgid ""
 "By default, the zip download is not allowed on sites. Enable it in the site "
 "settings of each site."
