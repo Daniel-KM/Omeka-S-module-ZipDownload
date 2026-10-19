@@ -3,6 +3,7 @@
 namespace ZipDownloadTest\Controller\Site;
 
 use Omeka\Test\AbstractHttpControllerTestCase;
+use ZipDownload\Controller\Site\DownloadController;
 use ZipDownloadTest\ZipDownloadTestTrait;
 
 /**
@@ -44,7 +45,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         $siteSettings->setTargetId($this->site->id());
         $siteSettings->set('zipdownload_enabled', false);
 
-        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id());
 
         $this->assertResponseStatusCode(404);
     }
@@ -54,7 +55,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
      */
     public function testDownloadReturnsNotFoundForInvalidResourceType(): void
     {
-        $this->dispatch('/s/test-site/download/invalid/1');
+        $this->dispatch('/s/test-site/zip-download/invalid/1');
 
         $this->assertResponseStatusCode(404);
     }
@@ -69,7 +70,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         $siteSettings->setTargetId($this->site->id());
         $siteSettings->set('zipdownload_enabled', true);
 
-        $this->dispatch('/s/test-site/download/item/999999');
+        $this->dispatch('/s/test-site/zip-download/item/999999');
 
         $this->assertResponseStatusCode(404);
     }
@@ -87,7 +88,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         $siteSettings->set('zipdownload_enabled', true);
 
         // Even with non-existent ID, route should match (returns 404, not routing error).
-        $this->dispatch('/s/test-site/download/' . $type . '/1');
+        $this->dispatch('/s/test-site/zip-download/' . $type . '/1');
 
         // Should be 404 (resource not found), not 500 or routing error.
         $this->assertResponseStatusCode(404);
@@ -112,7 +113,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         $siteSettings->set('zipdownload_enabled', true);
 
         // Query route (no resource ID).
-        $this->dispatch('/s/test-site/download/item');
+        $this->dispatch('/s/test-site/zip-download/item');
 
         // Should return 404 since no items match query.
         $this->assertResponseStatusCode(404);
@@ -132,7 +133,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
             'dcterms:title' => [['type' => 'literal', '@value' => 'Item Without Media']],
         ]);
 
-        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id());
 
         // No media means no downloadable files: should return 404, not crash.
         $this->assertResponseStatusCode(404);
@@ -156,7 +157,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         ]);
 
         // Request with single_as_file option.
-        $this->dispatch('/s/test-site/download/item/' . $item->id(), 'GET', [
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id(), 'GET', [
             'content' => 'all',
             'type' => 'original',
         ]);
@@ -175,7 +176,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
         $siteSettings->set('zipdownload_enabled', true);
 
         // Query with impossible filter.
-        $this->dispatch('/s/test-site/download/item', 'GET', [
+        $this->dispatch('/s/test-site/zip-download/item', 'GET', [
             'id' => [999999],
             'type' => 'original',
         ]);
@@ -185,8 +186,10 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * Item without media but with a copyright text configured: the download
-     * endpoint must produce a zip containing only the copyright file.
+     * Item without media but with a copyright text: a zip is streamed.
+     *
+     * The zip is streamed directly to the output after clearing the output
+     * buffers, so only the status and the headers can be checked.
      */
     public function testDownloadItemWithoutMediaButWithCopyrightTextReturnsZip(): void
     {
@@ -199,11 +202,11 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
             'dcterms:title' => [['type' => 'literal', '@value' => 'Notice-Only Item']],
         ]);
 
-        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id());
+        // Restore the output buffer of phpunit, closed by the controller.
+        ob_start();
         $this->assertResponseStatusCode(200);
-        $content = $this->getResponse()->getContent();
-        $this->assertNotEmpty($content, 'Zip content should not be empty.');
-        $this->assertStringStartsWith("PK", $content, 'Zip magic bytes expected.');
+        $this->assertResponseHeaderContains('Content-Type', 'application/zip');
     }
 
     /**
@@ -221,7 +224,7 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
             'dcterms:title' => [['type' => 'literal', '@value' => 'Empty Item']],
         ]);
 
-        $this->dispatch('/s/test-site/download/item/' . $item->id());
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id());
         $this->assertResponseStatusCode(404);
     }
 
@@ -232,24 +235,16 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
     {
         $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
         $siteSettings->setTargetId($this->site->id());
-        $siteSettings->set('zipdownload_enabled', true);
-        $siteSettings->set('zipdownload_text', 'Source: {main_title}');
+
+        $method = new \ReflectionMethod(DownloadController::class, 'getCopyrightFilename');
+        $method->setAccessible(true);
+        $controller = $this->getServiceLocator()->get('ControllerManager')
+            ->get(DownloadController::class);
+
         $siteSettings->set('zipdownload_text_filename', 'LICENSE.txt');
+        $this->assertSame('LICENSE.txt', $method->invoke($controller));
 
-        $item = $this->createItem([
-            'dcterms:title' => [['type' => 'literal', '@value' => 'Custom Copyright']],
-        ]);
-
-        $this->dispatch('/s/test-site/download/item/' . $item->id());
-        $this->assertResponseStatusCode(200);
-
-        $tmp = tempnam(sys_get_temp_dir(), 'zdl');
-        file_put_contents($tmp, $this->getResponse()->getContent());
-        $zip = new \ZipArchive();
-        $this->assertTrue($zip->open($tmp) === true, 'Zip must open.');
-        $this->assertNotFalse($zip->locateName('LICENSE.txt'), 'Custom copyright filename expected.');
-        $this->assertFalse($zip->locateName('COPYRIGHT.txt'), 'Default filename must not appear.');
-        $zip->close();
-        @unlink($tmp);
+        $siteSettings->set('zipdownload_text_filename', '');
+        $this->assertSame('COPYRIGHT.txt', $method->invoke($controller));
     }
 }
