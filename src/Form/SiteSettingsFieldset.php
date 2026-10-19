@@ -88,6 +88,18 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'zipdownload_iiif_full',
+                'type' => Element\Checkbox::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'Fetch full size images of iiif media', // @translate
+                    'info' => 'Iiif media have no original file. By default, the local derivative "large" is used for the type "original". When checked, the full image is fetched from the image server for each download, so the zip is better but slower and heavier.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_iiif_full',
+                ],
+            ])
+            ->add([
                 'name' => 'zipdownload_single_as_file',
                 'type' => Element\Checkbox::class,
                 'options' => [

@@ -232,18 +232,18 @@ class DownloadZip extends AbstractHelper
             && $resource->resourceName() === 'digital_objects';
 
         if ($resource instanceof MediaRepresentation || $isDo) {
-            if ($resource->hasOriginal()) {
+            if ($this->isDownloadableMedia($resource)) {
                 $medias[] = $resource;
             }
         } elseif ($resource instanceof ItemRepresentation) {
             if ($content === 'primary') {
                 $primary = $resource->primaryMedia();
-                if ($primary && $primary->hasOriginal()) {
+                if ($primary && $this->isDownloadableMedia($primary)) {
                     $medias[] = $primary;
                 }
             } else {
                 foreach ($resource->media() as $media) {
-                    if ($media->hasOriginal()) {
+                    if ($this->isDownloadableMedia($media)) {
                         $medias[] = $media;
                     }
                 }
@@ -288,10 +288,31 @@ class DownloadZip extends AbstractHelper
     }
 
     /**
+     * Check if a media has a file to download (original or iiif derivatives).
+     */
+    protected function isDownloadableMedia(AbstractResourceEntityRepresentation $media): bool
+    {
+        return $media->hasOriginal()
+            || ($media instanceof MediaRepresentation
+                && $media->renderer() === 'iiif'
+                && $media->hasThumbnails());
+    }
+
+    /**
      * Get file size for a media.
+     *
+     * For a media without original (iiif), the original is replaced by the
+     * derivative "large", or unknown when the full image is fetched remotely.
      */
     protected function getMediaFileSize(AbstractResourceEntityRepresentation $media, string $type): int
     {
+        if ($type === 'original' && !$media->hasOriginal()) {
+            if ($this->getView()->siteSetting('zipdownload_iiif_full')) {
+                return 0;
+            }
+            $type = 'large';
+        }
+
         $basePath = OMEKA_PATH . '/files/';
 
         if ($type === 'original') {
@@ -338,11 +359,9 @@ class DownloadZip extends AbstractHelper
         $title = substr($title, 0, 100);
 
         if ($isSingleFile && $media) {
-            if ($type === 'original') {
-                $extension = pathinfo($media->filename(), PATHINFO_EXTENSION);
-            } else {
-                $extension = 'jpg';
-            }
+            $extension = $type === 'original' && $media->hasOriginal()
+                ? pathinfo($media->filename(), PATHINFO_EXTENSION)
+                : 'jpg';
             return $title . '.' . $extension;
         }
 

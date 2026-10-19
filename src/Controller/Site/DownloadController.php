@@ -205,20 +205,22 @@ class DownloadController extends AbstractActionController
         string $type,
         $resource
     ): HttpResponse {
-        $filepath = $this->getMediaFilePath($media, $type);
-        if (!$filepath || !file_exists($filepath)) {
+        $file = $this->resolveMediaFile($media, $type);
+        if (!$file) {
             return $this->notFoundAction();
         }
 
-        $filename = $this->buildFilename($resource, true, $type, $media);
-
-        // Use Common's SendFile plugin if available.
-        return $this->sendFile($filepath, [
-            'filename' => $filename,
+        $response = $this->sendFile($file['path'], [
+            'filename' => $this->buildFilename($resource, $file['extension']),
             'disposition_mode' => 'attachment',
-            'resource' => $media,
-            'storage_type' => $type,
+            'content_type' => $file['media_type'],
         ]);
+
+        if ($file['temp']) {
+            @unlink($file['path']);
+        }
+
+        return $response ?? $this->notFoundAction();
     }
 
     /**
@@ -229,7 +231,7 @@ class DownloadController extends AbstractActionController
         string $type,
         $resource
     ): HttpResponse {
-        $filename = $this->buildFilename($resource, false, $type);
+        $filename = $this->buildFilename($resource);
 
         // Get copyright text.
         $copyrightText = $this->buildCopyrightText($resource, $medias, $type);
@@ -292,18 +294,7 @@ class DownloadController extends AbstractActionController
 
         // Add each media file (no compression, already compressed formats).
         foreach ($medias as $index => $media) {
-            $filepath = $this->getMediaFilePath($media, $type);
-            if (!$filepath || !file_exists($filepath)) {
-                continue;
-            }
-
-            $mediaFilename = $this->buildMediaFilename($media, $type, $index);
-
-            // Stream file from disk without compression.
-            $zip->addFileFromPath(
-                fileName: $mediaFilename,
-                path: $filepath,
-            );
+            $this->addMediaToZip($zip, $media, $type, $index);
         }
 
         $zip->finish();
@@ -399,18 +390,7 @@ class DownloadController extends AbstractActionController
                 : sprintf('%03d_media', $resourceIndex);
 
             foreach ($itemMedias as $mediaIndex => $media) {
-                $filepath = $this->getMediaFilePath($media, $type);
-                if (!$filepath || !file_exists($filepath)) {
-                    continue;
-                }
-
-                $mediaFilename = $this->buildMediaFilename($media, $type, $mediaIndex);
-
-                // Stream file from disk without compression.
-                $zip->addFileFromPath(
-                    fileName: $folderName . '/' . $mediaFilename,
-                    path: $filepath,
-                );
+                $this->addMediaToZip($zip, $media, $type, $mediaIndex, $folderName . '/');
             }
         }
 
@@ -471,18 +451,18 @@ class DownloadController extends AbstractActionController
             && $resource->resourceName() === 'digital_objects';
 
         if ($resource instanceof MediaRepresentation || $isDo) {
-            if ($resource->hasOriginal()) {
+            if ($this->isDownloadableMedia($resource)) {
                 $medias[] = $resource;
             }
         } elseif ($resource instanceof ItemRepresentation) {
             if ($content === 'primary') {
                 $primary = $resource->primaryMedia();
-                if ($primary && $primary->hasOriginal()) {
+                if ($primary && $this->isDownloadableMedia($primary)) {
                     $medias[] = $primary;
                 }
             } else {
                 foreach ($resource->media() as $media) {
-                    if ($media->hasOriginal()) {
+                    if ($this->isDownloadableMedia($media)) {
                         $medias[] = $media;
                     }
                 }
@@ -526,42 +506,133 @@ class DownloadController extends AbstractActionController
     }
 
     /**
-     * Get file path for a media.
+     * Check if a media has a file to download (original or iiif derivatives).
      */
-    protected function getMediaFilePath(AbstractResourceEntityRepresentation $media, string $type): ?string
+    protected function isDownloadableMedia(AbstractResourceEntityRepresentation $media): bool
     {
-        $basePath = OMEKA_PATH . '/files/';
-
-        if ($type === 'original') {
-            $filepath = $basePath . 'original/' . $media->filename();
-        } else {
-            $storageId = $media->storageId();
-            $filepath = $basePath . $type . '/' . $storageId . '.jpg';
-        }
-
-        return file_exists($filepath) ? $filepath : null;
+        return $media->hasOriginal()
+            || ($media instanceof MediaRepresentation
+                && $media->renderer() === 'iiif'
+                && $media->hasThumbnails());
     }
 
     /**
-     * Build download filename.
+     * Resolve the file to send for a media.
+     *
+     * A media without original (iiif) uses its local derivative "large" when
+     * the original is requested, or the full image fetched from the image
+     * server when the site option is set.
+     *
+     * @return array|null Keys: path, extension, media_type, temp.
      */
-    protected function buildFilename(
-        $resource,
-        bool $isSingleFile,
-        string $type,
-        ?AbstractResourceEntityRepresentation $media = null
-    ): string {
-        $title = $this->sanitizeFilename($resource->displayTitle());
-
-        if ($isSingleFile && $media) {
-            $extension = $type === 'original'
-                ? pathinfo($media->filename(), PATHINFO_EXTENSION)
-                : 'jpg';
-            $title = $this->stripExtension($title, $extension);
-            return $title . '.' . $extension;
+    protected function resolveMediaFile(AbstractResourceEntityRepresentation $media, string $type): ?array
+    {
+        if ($type === 'original' && !$media->hasOriginal()) {
+            if ($this->siteSettings()->get('zipdownload_iiif_full')) {
+                $filepath = $this->fetchIiifFullImage($media);
+                if ($filepath) {
+                    return [
+                        'path' => $filepath,
+                        'extension' => 'jpg',
+                        'media_type' => 'image/jpeg',
+                        'temp' => true,
+                    ];
+                }
+            }
+            $type = 'large';
         }
 
-        return $this->stripExtension($title, 'zip') . '.zip';
+        $basePath = OMEKA_PATH . '/files/';
+        if ($type === 'original') {
+            $filepath = $basePath . 'original/' . $media->filename();
+            $extension = (string) pathinfo($media->filename(), PATHINFO_EXTENSION);
+            $mediaType = $media->mediaType() ?: 'application/octet-stream';
+        } else {
+            $filepath = $basePath . $type . '/' . $media->storageId() . '.jpg';
+            $extension = 'jpg';
+            $mediaType = 'image/jpeg';
+        }
+
+        return file_exists($filepath) && is_readable($filepath)
+            ? ['path' => $filepath, 'extension' => $extension, 'media_type' => $mediaType, 'temp' => false]
+            : null;
+    }
+
+    /**
+     * Fetch the full size image of a iiif media into a temporary file.
+     */
+    protected function fetchIiifFullImage(AbstractResourceEntityRepresentation $media): ?string
+    {
+        if (!$media instanceof MediaRepresentation || $media->renderer() !== 'iiif') {
+            return null;
+        }
+
+        // Same urls than the core iiif ingester.
+        $data = $media->mediaData();
+        $context = $data['@context'] ?? null;
+        if ($context === 'http://iiif.io/api/image/3/context.json') {
+            $id = $data['id'] ?? null;
+            $path = '/full/max/0/default.jpg';
+        } elseif ($context === 'http://iiif.io/api/image/2/context.json') {
+            $id = $data['@id'] ?? null;
+            $path = '/full/full/0/default.jpg';
+        } else {
+            $id = $data['@id'] ?? null;
+            $path = '/full/full/0/native.jpg';
+        }
+        if (!$id) {
+            return null;
+        }
+
+        /** @var \Omeka\File\Downloader $downloader */
+        $downloader = $this->getEvent()->getApplication()->getServiceManager()
+            ->get('Omeka\File\Downloader');
+        $tempFile = $downloader->download(rtrim($id, '/') . $path);
+        if (!$tempFile) {
+            $this->logger()->warn(
+                'Media #{media_id}: unable to fetch the full iiif image, so the local derivative is used.', // @translate
+                ['media_id' => $media->id()]
+            );
+            return null;
+        }
+
+        return $tempFile->getTempPath();
+    }
+
+    /**
+     * Add a media file to the zip stream.
+     */
+    protected function addMediaToZip(
+        ZipStream $zip,
+        AbstractResourceEntityRepresentation $media,
+        string $type,
+        int $index,
+        string $folder = ''
+    ): void {
+        $file = $this->resolveMediaFile($media, $type);
+        if (!$file) {
+            return;
+        }
+
+        // Stream file from disk without compression.
+        $zip->addFileFromPath(
+            fileName: $folder . $this->buildMediaFilename($media, $file['extension'], $index),
+            path: $file['path'],
+        );
+
+        if ($file['temp']) {
+            @unlink($file['path']);
+        }
+    }
+
+    /**
+     * Build download filename, with the extension of the file, else zip.
+     */
+    protected function buildFilename($resource, ?string $extension = null): string
+    {
+        $extension ??= 'zip';
+        $title = $this->sanitizeFilename($resource->displayTitle());
+        return $this->stripExtension($title, $extension) . '.' . $extension;
     }
 
     /**
@@ -569,13 +640,14 @@ class DownloadController extends AbstractActionController
      */
     protected function buildMediaFilename(
         AbstractResourceEntityRepresentation $media,
-        string $type,
+        string $extension,
         int $index
     ): string {
-        $title = substr($this->sanitizeFilename($media->displayTitle()), 0, 80);
-        $extension = $type === 'original'
-            ? pathinfo($media->filename(), PATHINFO_EXTENSION)
-            : 'jpg';
+        // Without original, the default title is the source url (iiif).
+        $title = $media->hasOriginal() || !$media instanceof MediaRepresentation
+            ? $media->displayTitle()
+            : ($media->title() ?? $media->item()->displayTitle());
+        $title = substr($this->sanitizeFilename($title), 0, 80);
         $title = $this->stripExtension($title, $extension);
         return sprintf('%02d_%s.%s', $index + 1, $title, $extension);
     }
