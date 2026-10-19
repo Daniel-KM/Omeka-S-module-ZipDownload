@@ -18,7 +18,7 @@ See general end user documentation for [installing a module].
 
 The module requires the module [Common], version 3.4.74 or later.
 
-For zip streaming (multiple files), PHP 8.1+ and the library `maennchen/zipstream-php` v3
+For zip streaming (multiple files), PHP 8.2+ and the library `maennchen/zipstream-php` v3
 are required (installed via Composer).
 
 * From the zip
@@ -66,6 +66,14 @@ Site settings allow to configure:
   Unauthorized download attempts are logged.
 - Download content: Download primary media only or all media files (zip archive)
 - File type: Original, large, medium, or square thumbnails
+- Fetch full size images of iiif media: Iiif media (core ingester "IIIF image")
+  have no original file. By default, they are included with their local
+  derivative "large" when the type "original" is requested, and with the
+  matching derivative for other types. When checked, the full image is fetched
+  from the image server (`full/max` or `full/full`) for each download, so the
+  zip is better but slower and heavier. When the image server is unavailable
+  (no response after 15 seconds), the local derivative is used, and the server
+  is not requested again for the other media of the same download.
 - Single file as native: When enabled, single files are delivered as native
   files instead of zip archives
 - Download element: Use a button (default, recommended) to avoid scraping by
