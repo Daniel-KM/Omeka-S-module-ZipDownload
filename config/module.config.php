@@ -53,6 +53,12 @@ return [
             'downloadZip' => Site\ResourcePageBlockLayout\DownloadZip::class,
         ],
     ],
+    'js_translate_strings' => [
+        'Cancel', // @translate
+        'Confirm download', // @translate
+        'Download', // @translate
+        'Format', // @translate
+    ],
     'translator' => [
         'translation_file_patterns' => [
             [
