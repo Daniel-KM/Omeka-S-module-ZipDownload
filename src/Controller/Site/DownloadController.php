@@ -16,6 +16,18 @@ use ZipStream\ZipStream;
 class DownloadController extends AbstractActionController
 {
     /**
+     * Timeout in seconds to fetch a full iiif image.
+     */
+    const IIIF_TIMEOUT = 15;
+
+    /**
+     * Set when the image server failed, to skip next fetches.
+     *
+     * @var bool
+     */
+    protected $iiifUnavailable = false;
+
+    /**
      * Stream a resource download (single file or zip archive).
      */
     public function downloadAction()
@@ -584,11 +596,29 @@ class DownloadController extends AbstractActionController
             return null;
         }
 
-        /** @var \Omeka\File\Downloader $downloader */
-        $downloader = $this->getEvent()->getApplication()->getServiceManager()
-            ->get('Omeka\File\Downloader');
-        $tempFile = $downloader->download(rtrim($id, '/') . $path);
-        if (!$tempFile) {
+        if ($this->iiifUnavailable) {
+            return null;
+        }
+
+        // A single attempt with a short timeout, so an unavailable image server
+        // does not block the download.
+        $services = $this->getEvent()->getApplication()->getServiceManager();
+        $tempFile = $services->get('Omeka\File\TempFileFactory')->build();
+        /** @var \Laminas\Http\Client $client */
+        $client = $services->get('Omeka\HttpClient');
+        $client->getRequest()->getHeaders()->addHeaderLine('Accept-Encoding', 'identity');
+        $client
+            ->setOptions(['timeout' => self::IIIF_TIMEOUT])
+            ->setUri(rtrim($id, '/') . $path)
+            ->setStream($tempFile->getTempPath());
+        try {
+            $isOk = $client->send()->isOk();
+        } catch (\Throwable $e) {
+            $isOk = false;
+            $this->iiifUnavailable = true;
+        }
+        if (!$isOk) {
+            $tempFile->delete();
             $this->logger()->warn(
                 'Media #{media_id}: unable to fetch the full iiif image, so the local derivative is used.', // @translate
                 ['media_id' => $media->id()]
