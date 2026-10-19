@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-31 00:00+0000\n"
-"PO-Revision-Date: 2026-08-31 00:00+0000\n"
+"POT-Creation-Date: 2026-10-19 00:00+0000\n"
+"PO-Revision-Date: 2026-10-19 00:00+0000\n"
 "Last-Translator: Daniel Berthereau <Daniel.fr@Berthereau.net>\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -13,28 +13,29 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.6\n"
 
-#: data/scripts/upgrade.php:33 Module.php:77
+#: data/scripts/upgrade.php:33 Module.php:85
+#, php-format
+msgid "The module %1$s requires PHP %2$s or later."
+msgstr "Le module « %1$s » a besoin de PHP %2$s ou ultérieur."
+
+#: data/scripts/upgrade.php:37 data/scripts/upgrade.php:46
+msgid "Missing requirement. Unable to upgrade."
+msgstr "Pré-requis absent. Impossible de mettre à jour."
+
+#: data/scripts/upgrade.php:42 Module.php:77
 #, php-format
 msgid "The module %1$s should be upgraded to version %2$s or later."
 msgstr "Le module %1$s doit être mis à niveau à la version %2$s ou supérieure."
 
-#: data/scripts/upgrade.php:37
-msgid "Missing requirement. Unable to upgrade."
-msgstr "Pré-requis absent. Impossible de mettre à jour."
-
-#: Module.php:85
-msgid "This module requires PHP 8.1 or later."
-msgstr "Ce module nécessite PHP 8.1 ou une version ultérieure."
-
-#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:411
+#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:430
 msgid "Download"
 msgstr "Télécharger"
 
-#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:481
+#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:500
 msgid "Large"
 msgstr "Large"
 
-#: src/View/Helper/DownloadZip.php:123 src/View/Helper/DownloadZip.php:483
+#: src/View/Helper/DownloadZip.php:123 src/View/Helper/DownloadZip.php:502
 msgid "Square"
 msgstr "Carré"
 
@@ -64,7 +65,7 @@ msgstr "%s et al."
 msgid "Viewed on %s"
 msgstr "Consulte le %s"
 
-#: data/scripts/upgrade.php:52
+#: data/scripts/upgrade.php:61
 msgid ""
 "It is now possible to configure multiple file types for download. When "
 "multiple types are selected, visitors can choose the format in the download "
@@ -74,7 +75,7 @@ msgstr ""
 "téléchargement. Lorsque plusieurs types sont sélectionnés, les visiteurs "
 "peuvent choisir le format dans la boîte de dialogue."
 
-#: data/scripts/upgrade.php:59
+#: data/scripts/upgrade.php:68
 msgid ""
 "The copyright text included in the zip (COPYRIGHT.txt) is now rendered via "
 "customizable theme partials."
@@ -82,7 +83,7 @@ msgstr ""
 "Le texte de copyright inclus dans le zip (COPYRIGHT.txt) est désormais "
 "personnalisable via le thème."
 
-#: data/scripts/upgrade.php:66
+#: data/scripts/upgrade.php:75
 msgid ""
 "An asset, for example a pdf presenting the institution, can now be attached "
 "to every generated zip via a new site setting."
@@ -90,7 +91,7 @@ msgstr ""
 "Un fichier, par exemple un pdf présentant l’institution, peut désormais être "
 "attaché à chaque zip créé via un nouveau paramètre de site."
 
-#: data/scripts/upgrade.php:71
+#: data/scripts/upgrade.php:80
 msgid ""
 "The filename of the copyright file inside the zip can now be customized via "
 "a new site setting."
@@ -98,17 +99,26 @@ msgstr ""
 "Le nom du fichier copyright inclus dans le zip peut désormais être "
 "personnalisé avec un nouveau paramètre de site."
 
-#: data/scripts/upgrade.php:76
+#: data/scripts/upgrade.php:85
 msgid "Dialog labels for file types are now customizable per site."
 msgstr ""
 "Les libellés par type de fichier pour le dialogue sont désormais "
 "personnalisable par site."
 
-#: data/scripts/upgrade.php:81
+#: data/scripts/upgrade.php:90
 msgid "The {link}digital objects{link_end} are now supported."
 msgstr "Les {link}objets numériques{link_end} sont désormais pris en charge."
 
-#: Module.php:101
+#: data/scripts/upgrade.php:99
+msgid ""
+"Iiif media are now included in zip, with their local derivatives, or with "
+"the full image from the image server when the new site setting is set."
+msgstr ""
+"Les médias iiif sont désormais inclus dans le fichier zip avec la vignette "
+"locale ou avec l’image complète du serveur d’images si le nouveau paramètre "
+"du site est coché."
+
+#: Module.php:102
 msgid ""
 "By default, the zip download is not allowed on sites. Enable it in the site "
 "settings of each site."
@@ -140,7 +150,7 @@ msgstr "Télécharger {count} fichiers en zip : {filename}"
 msgid "Download {count} files as zip: {filename} ({size})"
 msgstr "Télécharger {count} fichiers en zip : {filename} ({size})"
 
-#: src/View/Helper/DownloadZip.php:527
+#: src/View/Helper/DownloadZip.php:546
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename}"
@@ -148,7 +158,7 @@ msgstr ""
 "Télécharger {file_count} fichiers de {resource_count} ressources en zip : "
 "{filename}"
 
-#: src/View/Helper/DownloadZip.php:536
+#: src/View/Helper/DownloadZip.php:555
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename} ({size})"
@@ -211,14 +221,32 @@ msgstr ""
 "\"type = label\". Laisser vide pour utiliser les libellés par défaut."
 
 #: src/Form/SiteSettingsFieldset.php:95
+#, fuzzy
+msgid "Fetch full size images of iiif media"
+msgstr "Récupérer les images en taille réelle des médias iiif"
+
+#: src/Form/SiteSettingsFieldset.php:96
+msgid ""
+"Iiif media have no original file. By default, the local derivative \"large\" "
+"is used for the type \"original\". When checked, the full image is fetched "
+"from the image server for each download, so the zip is better but slower and "
+"heavier."
+msgstr ""
+"Les médias iiif n’ont pas de fichier original. Par défaut, la version "
+"dérivée locale « large » est utilisée pour le type « original ». Si cochée, "
+"l’image complète est récupérée depuis le serveur d’images à chaque "
+"téléchargement ; le fichier zip est donc de meilleure qualité, mais plus "
+"lent et plus lourd."
+
+#: src/Form/SiteSettingsFieldset.php:107
 msgid "Output single file as native file"
 msgstr "Utiliser le fichier natif si le document a un seul fichier"
 
-#: src/Form/SiteSettingsFieldset.php:106
+#: src/Form/SiteSettingsFieldset.php:118
 msgid "Download element"
 msgstr "Élément html Télécharger"
 
-#: src/Form/SiteSettingsFieldset.php:107
+#: src/Form/SiteSettingsFieldset.php:119
 msgid ""
 "Use a button (default) to avoid scraping by bots, or a link for better "
 "accessibility."
@@ -226,19 +254,19 @@ msgstr ""
 "Utilisez un bouton (par défaut) pour éviter le vol par les robots, ou un "
 "lien pour une meilleure accessibilité."
 
-#: src/Form/SiteSettingsFieldset.php:109
+#: src/Form/SiteSettingsFieldset.php:121
 msgid "Button (recommended)"
 msgstr "Bouton (recommandé)"
 
-#: src/Form/SiteSettingsFieldset.php:110
+#: src/Form/SiteSettingsFieldset.php:122
 msgid "Link"
 msgstr "Lien"
 
-#: src/Form/SiteSettingsFieldset.php:122
+#: src/Form/SiteSettingsFieldset.php:134
 msgid "Maximum resources for batch download"
 msgstr "Nombre maximal de fichiers pour le téléchargement groupé"
 
-#: src/Form/SiteSettingsFieldset.php:123
+#: src/Form/SiteSettingsFieldset.php:135
 msgid ""
 "Maximum number of resources that can be downloaded at once via query. Set 0 "
 "for no limit."
@@ -246,11 +274,11 @@ msgstr ""
 "Nombre maximal de ressources pouvant être téléchargées simultanément via une "
 "requête. Indiquez 0 pour ne pas limiter."
 
-#: src/Form/SiteSettingsFieldset.php:136
+#: src/Form/SiteSettingsFieldset.php:148
 msgid "Asset to include in zip"
 msgstr "Fichier à inclure dans le zip"
 
-#: src/Form/SiteSettingsFieldset.php:137
+#: src/Form/SiteSettingsFieldset.php:149
 msgid ""
 "Optional file (e.g. PDF presenting the institution) included in every "
 "generated zip."
@@ -258,11 +286,11 @@ msgstr ""
 "Fichier (par exemple un pdf présentant l’institution) inclus dans chaque "
 "fichier zip."
 
-#: src/Form/SiteSettingsFieldset.php:148
+#: src/Form/SiteSettingsFieldset.php:160
 msgid "Name of the text file to add in the zip"
 msgstr "Nom du fichier texte à ajouter dans le zip"
 
-#: src/Form/SiteSettingsFieldset.php:149
+#: src/Form/SiteSettingsFieldset.php:161
 msgid ""
 "This text usually contains the record, the url and the copyright. Default: "
 "COPYRIGHT.txt"
@@ -270,15 +298,15 @@ msgstr ""
 "Ce texte contient généralement la notice, l’url et le copyright. Défaut : "
 "COPYRIGHT.txt"
 
-#: src/Form/SiteSettingsFieldset.php:161
+#: src/Form/SiteSettingsFieldset.php:173
 msgid "Text of the file to add in the zip"
 msgstr "Texte du fichier à ajouter dans le zip"
 
-#: src/Form/SiteSettingsFieldset.php:162
+#: src/Form/SiteSettingsFieldset.php:174
 msgid "This text usually contains the record, the url and the copyright."
 msgstr "Ce texte contient généralement la notice, l’url et le copyright."
 
-#: src/Controller/Site/DownloadController.php:37
+#: src/Controller/Site/DownloadController.php:49
 msgid ""
 "Attempt to download zip for resource {resource_type} #{resource_id} on site "
 "\"{site}\" without download enabled."
@@ -287,20 +315,28 @@ msgstr ""
 "#{resource_id} sur le site « {site} » alors que le téléchargement n’est pas "
 "activé."
 
-#: src/Controller/Site/DownloadController.php:103
-#: src/Controller/Site/DownloadController.php:192
+#: src/Controller/Site/DownloadController.php:115
+#: src/Controller/Site/DownloadController.php:204
 msgid "The ZipStream library is required to download multiple files as zip."
 msgstr ""
 "La bibliothèque ZipStream est nécessaire pour télécharger plusieurs fichiers "
 "au format zip."
 
-#: src/Controller/Site/DownloadController.php:127
+#: src/Controller/Site/DownloadController.php:139
 msgid ""
 "Attempt to download zip via query for {resource_type} on site \"{site}\" "
 "without download enabled."
 msgstr ""
 "Tentative de téléchargement zip via une requête pour {resource_type} sur le "
 "site « {site} » alors que le téléchargement n’est pas activé."
+
+#: src/Controller/Site/DownloadController.php:623
+msgid ""
+"Media #{media_id}: unable to fetch the full iiif image, so the local "
+"derivative is used."
+msgstr ""
+"Média #{media_id} : impossible de récupérer l'image iiif complète ; la "
+"vignette locale est donc utilisée."
 
 #: src/Site/ResourcePageBlockLayout/DownloadPrimary.php:16
 msgid "Download primary media"
@@ -313,6 +349,16 @@ msgstr "Télécharger le premier objet numérique"
 #: src/Site/ResourcePageBlockLayout/DownloadZip.php:16
 msgid "Download zip"
 msgstr "Télécharger le zip"
+
+#: config/module.config.php:58
+msgid "Confirm download"
+msgstr "Confirmer le téléchargement"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Format"
+#~ msgstr "Format"
 
 #~ msgid "Copyright text"
 #~ msgstr "Mention de copyright"
