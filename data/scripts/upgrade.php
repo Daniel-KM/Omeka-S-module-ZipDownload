@@ -93,3 +93,10 @@ if (version_compare((string) $oldVersion, '3.4.5', '<')) {
     $message->setEscapeHtml(false);
     $messenger->addSuccess($message);
 }
+
+if (version_compare((string) $oldVersion, '3.4.8', '<')) {
+    $message = new PsrMessage(
+        'Iiif media are now included in zip, with their local derivatives, or with the full image from the image server when the new site setting is set.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
