@@ -80,9 +80,10 @@ class Module extends AbstractModule
             $errors[] = (string) $message;
         }
 
-        if (PHP_VERSION_ID < 80100) {
+        if (PHP_VERSION_ID < 80200) {
             $message = new \Omeka\Stdlib\Message(
-                $translator->translate('This module requires PHP 8.1 or later.') // @translate
+                $translator->translate('The module %1$s requires PHP %2$s or later.'), // @translate
+                'ZipDownload', '8.2'
             );
             $errors[] = (string) $message;
         }

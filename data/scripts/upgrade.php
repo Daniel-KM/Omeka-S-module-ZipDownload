@@ -28,6 +28,15 @@ $messenger = $plugins->get('messenger');
 $siteSettings = $services->get('Omeka\Settings\Site');
 $entityManager = $services->get('Omeka\EntityManager');
 
+if (PHP_VERSION_ID < 80200) {
+    $message = new \Omeka\Stdlib\Message(
+        $translate('The module %1$s requires PHP %2$s or later.'), // @translate
+        'ZipDownload', '8.2'
+    );
+    $messenger->addError($message);
+    throw new \Omeka\Module\Exception\ModuleCannotInstallException((string) $translate('Missing requirement. Unable to upgrade.')); // @translate
+}
+
 if (!method_exists($this, 'checkModuleActiveVersion') || !$this->checkModuleActiveVersion('Common', '3.4.91')) {
     $message = new \Omeka\Stdlib\Message(
         $translate('The module %1$s should be upgraded to version %2$s or later.'), // @translate

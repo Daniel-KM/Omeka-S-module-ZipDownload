@@ -101,11 +101,11 @@ class DownloadZip extends AbstractHelper
             return '';
         }
 
-        // Check if zip output will be needed. Zip streaming requires PHP 8.1+
+        // Check if zip output will be needed. Zip streaming requires PHP 8.2+
         // (ZipStream v3).
         $isSingleMedia = !empty($medias) && ($content === 'primary' || count($medias) === 1);
         $needsZip = !$singleAsFile || !$isSingleMedia || empty($medias);
-        if ($needsZip && PHP_VERSION_ID < 80100) {
+        if ($needsZip && PHP_VERSION_ID < 80200) {
             return '';
         }
 
@@ -419,8 +419,8 @@ class DownloadZip extends AbstractHelper
             return '';
         }
 
-        // Zip streaming requires PHP 8.1+ (ZipStream v3).
-        if (PHP_VERSION_ID < 80100) {
+        // Zip streaming requires PHP 8.2+ (ZipStream v3).
+        if (PHP_VERSION_ID < 80200) {
             return '';
         }
 
