@@ -110,6 +110,8 @@ return [
             'zipdownload_tag' => '',
             'zipdownload_max' => '',
             'zipdownload_text' => '',
+            // Allow to remove the text file or the asset set in main settings.
+            'zipdownload_exclude' => [],
         ],
     ],
 ];

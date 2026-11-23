@@ -136,4 +136,16 @@ class Module extends AbstractModule
         }
         return $siteValue;
     }
+
+    /**
+     * Check if the site removed the text file or the asset of main settings.
+     */
+    public static function isExcludedSetting(string $name, $siteExclude): bool
+    {
+        $files = [
+            'zipdownload_text' => 'text',
+            'zipdownload_asset' => 'asset',
+        ];
+        return isset($files[$name]) && in_array($files[$name], (array) $siteExclude, true);
+    }
 }

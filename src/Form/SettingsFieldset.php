@@ -172,6 +172,24 @@ class SettingsFieldset extends Fieldset
                 ],
             ])
         ;
+
+        if ($this->isSite) {
+            $this->add([
+                'name' => 'zipdownload_exclude',
+                'type' => CommonElement\OptionalMultiCheckbox::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'Remove files set in main settings', // @translate
+                    'value_options' => [
+                        'text' => 'No text file', // @translate
+                        'asset' => 'No asset', // @translate
+                    ],
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_exclude',
+                ],
+            ]);
+        }
     }
 
     /**

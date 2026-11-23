@@ -622,6 +622,9 @@ class DownloadZip extends AbstractHelper
     protected function zipSetting(string $name, $default = null)
     {
         $view = $this->getView();
+        if (\ZipDownload\Module::isExcludedSetting($name, $view->siteSetting('zipdownload_exclude'))) {
+            return $name === 'zipdownload_text' ? '' : null;
+        }
         return \ZipDownload\Module::resolveSetting($view->siteSetting($name), $view->setting($name)) ?? $default;
     }
 }

@@ -856,6 +856,9 @@ class DownloadController extends AbstractActionController
      */
     protected function zipSetting(string $name, $default = null)
     {
+        if (\ZipDownload\Module::isExcludedSetting($name, $this->siteSettings()->get('zipdownload_exclude'))) {
+            return $name === 'zipdownload_text' ? '' : null;
+        }
         return \ZipDownload\Module::resolveSetting($this->siteSettings()->get($name), $this->settings()->get($name)) ?? $default;
     }
 }
