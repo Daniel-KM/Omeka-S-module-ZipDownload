@@ -78,6 +78,7 @@ return [
             'zipdownload_asset' => null,
             'zipdownload_text_filename' => 'COPYRIGHT.txt',
             'zipdownload_iiif_full' => false,
+            'zipdownload_iiif_full_max' => 4,
             'zipdownload_single_as_file' => false,
             'zipdownload_tag' => 'button',
             'zipdownload_max' => 25,

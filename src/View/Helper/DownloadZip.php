@@ -17,6 +17,13 @@ use Omeka\Api\Representation\MediaRepresentation;
 class DownloadZip extends AbstractHelper
 {
     /**
+     * Set according to the number of files of the download.
+     *
+     * @var bool
+     */
+    protected $iiifFull = false;
+
+    /**
      * @var bool
      */
     protected static $assetsLoaded = false;
@@ -277,6 +284,9 @@ class DownloadZip extends AbstractHelper
      */
     protected function calculateTotalSize(array $medias, string $type): int
     {
+        $max = (int) $this->getView()->siteSetting('zipdownload_iiif_full_max', 0);
+        $this->iiifFull = $this->getView()->siteSetting('zipdownload_iiif_full')
+            && (!$max || count($medias) <= $max);
         $totalSize = 0;
         foreach ($medias as $media) {
             $size = $this->getMediaFileSize($media, $type);
@@ -307,7 +317,7 @@ class DownloadZip extends AbstractHelper
     protected function getMediaFileSize(AbstractResourceEntityRepresentation $media, string $type): int
     {
         if ($type === 'original' && !$media->hasOriginal()) {
-            if ($this->getView()->siteSetting('zipdownload_iiif_full')) {
+            if ($this->iiifFull) {
                 return 0;
             }
             $type = 'large';

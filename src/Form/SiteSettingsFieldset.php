@@ -100,6 +100,19 @@ class SiteSettingsFieldset extends Fieldset
                 ],
             ])
             ->add([
+                'name' => 'zipdownload_iiif_full_max',
+                'type' => Element\Number::class,
+                'options' => [
+                    'element_group' => 'zip_download',
+                    'label' => 'Maximum number of files to fetch in full size', // @translate
+                    'info' => 'When a download has more files, the local derivatives "large" are used for all of them, so the image server is not overloaded. Set 0 for no limit.', // @translate
+                ],
+                'attributes' => [
+                    'id' => 'zipdownload_iiif_full_max',
+                    'min' => 0,
+                ],
+            ])
+            ->add([
                 'name' => 'zipdownload_single_as_file',
                 'type' => Element\Checkbox::class,
                 'options' => [

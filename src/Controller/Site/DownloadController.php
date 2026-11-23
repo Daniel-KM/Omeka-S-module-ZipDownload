@@ -28,6 +28,13 @@ class DownloadController extends AbstractActionController
     protected $iiifUnavailable = false;
 
     /**
+     * Set according to the number of files of the download.
+     *
+     * @var bool
+     */
+    protected $iiifFull = false;
+
+    /**
      * Stream a resource download (single file or zip archive).
      */
     public function downloadAction()
@@ -81,6 +88,7 @@ class DownloadController extends AbstractActionController
 
         // Get downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
+        $this->iiifFull = $this->useIiifFull(count($medias));
 
         // Allow empty medias when copyright text or asset is configured.
         $hasCopyrightText = strlen(trim((string) $this->siteSettings()->get('zipdownload_text', '')));
@@ -197,6 +205,7 @@ class DownloadController extends AbstractActionController
         if (empty($allMedias)) {
             return $this->notFoundAction();
         }
+        $this->iiifFull = $this->useIiifFull(count($allMedias));
 
         // Check if ZipStream is available.
         if (!class_exists(\ZipStream\ZipStream::class)) {
@@ -540,7 +549,7 @@ class DownloadController extends AbstractActionController
     protected function resolveMediaFile(AbstractResourceEntityRepresentation $media, string $type): ?array
     {
         if ($type === 'original' && !$media->hasOriginal()) {
-            if ($this->siteSettings()->get('zipdownload_iiif_full')) {
+            if ($this->iiifFull) {
                 $filepath = $this->fetchIiifFullImage($media);
                 if ($filepath) {
                     return [
@@ -568,6 +577,17 @@ class DownloadController extends AbstractActionController
         return file_exists($filepath) && is_readable($filepath)
             ? ['path' => $filepath, 'extension' => $extension, 'media_type' => $mediaType, 'temp' => false]
             : null;
+    }
+
+    /**
+     * Check if the full size images of iiif media are fetched for a download.
+     */
+    protected function useIiifFull(int $countFiles): bool
+    {
+        $siteSettings = $this->siteSettings();
+        $max = (int) $siteSettings->get('zipdownload_iiif_full_max', 0);
+        return $siteSettings->get('zipdownload_iiif_full')
+            && (!$max || $countFiles <= $max);
     }
 
     /**
