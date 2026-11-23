@@ -100,3 +100,67 @@ if (version_compare((string) $oldVersion, '3.4.8', '<')) {
     );
     $messenger->addSuccess($message);
 }
+
+if (version_compare((string) $oldVersion, '3.4.10', '<')) {
+    // Site settings now fallback to new main settings when empty. When all
+    // sites share a value, it becomes the main one and sites use it.
+    $mainDefaults = $this->getConfig()['zipdownload']['settings'];
+    $booleans = ['zipdownload_enabled', 'zipdownload_iiif_full', 'zipdownload_single_as_file'];
+    $emptyValues = [
+        'zipdownload_type' => [],
+        'zipdownload_type_labels' => [],
+        'zipdownload_asset' => null,
+    ];
+    // An empty text or asset removed the file, so it becomes an exclusion
+    // when the main settings define one.
+    $files = [
+        'zipdownload_text' => 'text',
+        'zipdownload_asset' => 'asset',
+    ];
+    $excludes = [];
+    // Numbers may be stored as integers or strings, texts with any line end.
+    $normalize = fn ($v) => is_scalar($v) && !is_bool($v) ? strtr((string) $v, ["\r\n" => "\n"]) : $v;
+    $siteIds = $api->search('sites', [], ['returnScalar' => 'id'])->getContent();
+    foreach ($mainDefaults as $name => $default) {
+        $default = $normalize($default);
+        $isBoolean = in_array($name, $booleans, true);
+        $empty = array_key_exists($name, $emptyValues) ? $emptyValues[$name] : '';
+        $values = [];
+        foreach ($siteIds as $siteId) {
+            $siteSettings->setTargetId($siteId);
+            $value = $siteSettings->get($name);
+            if ($name === 'zipdownload_text') {
+                // The previous code used an empty text when not set.
+                $value ??= '';
+            } elseif ($value === null || ($name === 'zipdownload_asset' && $value === '')) {
+                $value = $default;
+            }
+            $values[$siteId] = $isBoolean ? (bool) $value : $normalize($value);
+        }
+        $distinct = array_unique(array_map('serialize', $values));
+        $mainValue = count($distinct) === 1 ? reset($values) : $default;
+        if ($settings->get($name) === null || count($distinct) === 1) {
+            $settings->set($name, $mainValue);
+        }
+        foreach ($values as $siteId => $value) {
+            $siteSettings->setTargetId($siteId);
+            if ($value === $mainValue) {
+                $siteSettings->set($name, $empty);
+            } elseif (isset($files[$name]) && ($value === '' || $value === null)) {
+                $siteSettings->set($name, $empty);
+                $excludes[$siteId][] = $files[$name];
+            } elseif ($isBoolean) {
+                $siteSettings->set($name, $value ? 'yes' : 'no');
+            }
+        }
+    }
+    foreach ($siteIds as $siteId) {
+        $siteSettings->setTargetId($siteId);
+        $siteSettings->set('zipdownload_exclude', $excludes[$siteId] ?? []);
+    }
+
+    $message = new PsrMessage(
+        'The options are now available in main settings. Each site uses them by default and can override them. When all sites had the same value, it was moved to main settings.' // @translate
+    );
+    $messenger->addSuccess($message);
+}
