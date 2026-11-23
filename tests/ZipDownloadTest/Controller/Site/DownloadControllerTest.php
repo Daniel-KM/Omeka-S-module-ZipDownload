@@ -15,10 +15,23 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
 
     protected $site;
 
+    /**
+     * @var array Main settings to restore after each test.
+     */
+    protected $mainSettings = [];
+
     public function setUp(): void
     {
         parent::setUp();
         $this->loginAdmin();
+
+        // Sites use the main settings when their own value is empty, so the
+        // main ones are neutralized for predictable tests.
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        foreach (['zipdownload_enabled' => false, 'zipdownload_text' => '', 'zipdownload_asset' => null] as $name => $value) {
+            $this->mainSettings[$name] = $settings->get($name);
+            $settings->set($name, $value);
+        }
 
         // Create a test site.
         $this->site = $this->createSite('test-site', 'Test Site');
@@ -26,8 +39,88 @@ class DownloadControllerTest extends AbstractHttpControllerTestCase
 
     public function tearDown(): void
     {
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        foreach ($this->mainSettings as $name => $value) {
+            $settings->set($name, $value);
+        }
         $this->cleanupResources();
         parent::tearDown();
+    }
+
+    /**
+     * Test the site follows the main setting when its own value is empty.
+     */
+    public function testDownloadFollowsMainSettingWhenSiteValueIsEmpty(): void
+    {
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        $settings->set('zipdownload_enabled', true);
+        $settings->set('zipdownload_text', 'Source: {main_title}');
+
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', '');
+        $siteSettings->set('zipdownload_text', '');
+
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Item Main Settings']],
+        ]);
+
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id(), 'GET', [
+            'content' => 'all',
+            'type' => 'original',
+        ]);
+
+        // Restore the output buffer of phpunit, closed by the controller.
+        ob_start();
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * Test the site can remove the text file set in main settings.
+     */
+    public function testDownloadSiteExcludesMainText(): void
+    {
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        $settings->set('zipdownload_text', 'Source: {main_title}');
+
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', 'yes');
+        $siteSettings->set('zipdownload_text', '');
+        $siteSettings->set('zipdownload_exclude', ['text']);
+
+        // Without media and without text, there is nothing to download.
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Item Excluded Text']],
+        ]);
+
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id(), 'GET', [
+            'content' => 'all',
+            'type' => 'original',
+        ]);
+
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * Test the site value "no" overrides the main setting.
+     */
+    public function testDownloadSiteValueNoOverridesMainSetting(): void
+    {
+        $settings = $this->getServiceLocator()->get('Omeka\Settings');
+        $settings->set('zipdownload_enabled', true);
+
+        $siteSettings = $this->getServiceLocator()->get('Omeka\Settings\Site');
+        $siteSettings->setTargetId($this->site->id());
+        $siteSettings->set('zipdownload_enabled', 'no');
+
+        $item = $this->createItem([
+            'dcterms:title' => [['type' => 'literal', '@value' => 'Item Site No']],
+        ]);
+
+        $this->dispatch('/s/test-site/zip-download/item/' . $item->id());
+
+        $this->assertResponseStatusCode(404);
     }
 
     /**
