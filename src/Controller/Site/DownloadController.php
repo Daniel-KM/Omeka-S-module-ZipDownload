@@ -4,6 +4,7 @@ namespace ZipDownload\Controller\Site;
 
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 use Omeka\Api\Representation\AbstractResourceEntityRepresentation;
 use Omeka\Api\Representation\ItemRepresentation;
 use Omeka\Api\Representation\MediaRepresentation;
@@ -225,7 +226,7 @@ class DownloadController extends AbstractActionController
         AbstractResourceEntityRepresentation $media,
         string $type,
         $resource
-    ): HttpResponse {
+    ): HttpResponse|ViewModel {
         $file = $this->resolveMediaFile($media, $type);
         if (!$file) {
             return $this->notFoundAction();
