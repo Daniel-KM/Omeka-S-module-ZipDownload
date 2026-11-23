@@ -177,13 +177,14 @@ class DownloadZip extends AbstractHelper
                 'Download notice: {filename}', // @translate
                 ['filename' => $escape($filename)]
             );
-        } elseif ($isSingleFile && !$hasMultipleTypes) {
+        } elseif ($isSingleFile && !$hasMultipleTypes && $totalSize) {
             $dialogMessage = new PsrMessage(
                 'Download file: {filename} ({size})', // @translate
                 ['filename' => $escape($filename), 'size' => $formattedSize]
             );
-        } elseif ($hasMultipleTypes) {
-            // Size omitted: shown per type in dialog radios.
+        } elseif ($hasMultipleTypes || !$totalSize) {
+            // Size omitted: shown per type in dialog radios, or unknown (full
+            // size iiif images).
             if ($isSingleFile) {
                 $dialogMessage = new PsrMessage(
                     'Download file: {filename}', // @translate
@@ -551,7 +552,7 @@ class DownloadZip extends AbstractHelper
         $mediaCount = count($allMedias);
         $resourceCount = count($resources);
         $hasMultipleTypes = count($types) > 1;
-        if ($hasMultipleTypes) {
+        if ($hasMultipleTypes || !$totalSize) {
             $dialogMessage = new PsrMessage(
                 'Download {file_count} files from {resource_count} resources as zip: {filename}', // @translate
                 [

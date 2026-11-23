@@ -81,7 +81,7 @@ var ZipDownload = (function() {
             var checked = i === 0 ? ' checked' : '';
             radiosHtml += '<label class="zip-download-label" style="display: block; margin-bottom: .35em; cursor: pointer;">'
                 + '<input type="radio" name="zip-download-type" value="' + type + '"' + checked + ' style="width: auto; height: auto; margin-right: 6px;"> '
-                + data.label + ' (' + data.formattedSize + ')'
+                + data.label + (data.size ? ' (' + data.formattedSize + ')' : '')
                 + '</label>';
         }
         radiosHtml += '</fieldset>';
