@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 00:00+0000\n"
+"POT-Creation-Date: 2026-11-23 00:00+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: data/scripts/upgrade.php:33 Module.php:85
+#: Module.php:77 data/scripts/upgrade.php:42
+#, php-format
+msgid "The module %1$s should be upgraded to version %2$s or later."
+msgstr ""
+
+#: Module.php:85 data/scripts/upgrade.php:33
 #, php-format
 msgid "The module %1$s requires PHP %2$s or later."
 msgstr ""
@@ -26,20 +31,15 @@ msgstr ""
 msgid "Missing requirement. Unable to upgrade."
 msgstr ""
 
-#: data/scripts/upgrade.php:42 Module.php:77
-#, php-format
-msgid "The module %1$s should be upgraded to version %2$s or later."
-msgstr ""
-
-#: src/View/Helper/DownloadZip.php:76 src/View/Helper/DownloadZip.php:430
+#: src/View/Helper/DownloadZip.php:83 src/View/Helper/DownloadZip.php:441
 msgid "Download"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:121 src/View/Helper/DownloadZip.php:500
+#: src/View/Helper/DownloadZip.php:128 src/View/Helper/DownloadZip.php:511
 msgid "Large"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:123 src/View/Helper/DownloadZip.php:502
+#: src/View/Helper/DownloadZip.php:130 src/View/Helper/DownloadZip.php:513
 msgid "Square"
 msgstr ""
 
@@ -118,33 +118,33 @@ msgstr ""
 msgid "Y-m-d"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:170
+#: src/View/Helper/DownloadZip.php:177
 msgid "Download notice: {filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:175
+#: src/View/Helper/DownloadZip.php:182
 msgid "Download file: {filename} ({size})"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:182
+#: src/View/Helper/DownloadZip.php:190
 msgid "Download file: {filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:187
+#: src/View/Helper/DownloadZip.php:195
 msgid "Download {count} files as zip: {filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:193
+#: src/View/Helper/DownloadZip.php:201
 msgid "Download {count} files as zip: {filename} ({size})"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:546
+#: src/View/Helper/DownloadZip.php:557
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename}"
 msgstr ""
 
-#: src/View/Helper/DownloadZip.php:555
+#: src/View/Helper/DownloadZip.php:566
 msgid ""
 "Download {file_count} files from {resource_count} resources as zip: "
 "{filename} ({size})"
@@ -209,83 +209,93 @@ msgid ""
 msgstr ""
 
 #: src/Form/SiteSettingsFieldset.php:107
+msgid "Maximum number of files to fetch in full size"
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:108
+msgid ""
+"When a download has more files, the local derivatives \"large\" are used for "
+"all of them, so the image server is not overloaded. Set 0 for no limit."
+msgstr ""
+
+#: src/Form/SiteSettingsFieldset.php:120
 msgid "Output single file as native file"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:118
+#: src/Form/SiteSettingsFieldset.php:131
 msgid "Download element"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:119
+#: src/Form/SiteSettingsFieldset.php:132
 msgid ""
 "Use a button (default) to avoid scraping by bots, or a link for better "
 "accessibility."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:121
+#: src/Form/SiteSettingsFieldset.php:134
 msgid "Button (recommended)"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:122
+#: src/Form/SiteSettingsFieldset.php:135
 msgid "Link"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:134
+#: src/Form/SiteSettingsFieldset.php:147
 msgid "Maximum resources for batch download"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:135
+#: src/Form/SiteSettingsFieldset.php:148
 msgid ""
 "Maximum number of resources that can be downloaded at once via query. Set 0 "
 "for no limit."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:148
+#: src/Form/SiteSettingsFieldset.php:161
 msgid "Asset to include in zip"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:149
+#: src/Form/SiteSettingsFieldset.php:162
 msgid ""
 "Optional file (e.g. PDF presenting the institution) included in every "
 "generated zip."
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:160
+#: src/Form/SiteSettingsFieldset.php:173
 msgid "Name of the text file to add in the zip"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:161
+#: src/Form/SiteSettingsFieldset.php:174
 msgid ""
 "This text usually contains the record, the url and the copyright. Default: "
 "COPYRIGHT.txt"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:173
+#: src/Form/SiteSettingsFieldset.php:186
 msgid "Text of the file to add in the zip"
 msgstr ""
 
-#: src/Form/SiteSettingsFieldset.php:174
+#: src/Form/SiteSettingsFieldset.php:187
 msgid "This text usually contains the record, the url and the copyright."
 msgstr ""
 
-#: src/Controller/Site/DownloadController.php:49
+#: src/Controller/Site/DownloadController.php:57
 msgid ""
 "Attempt to download zip for resource {resource_type} #{resource_id} on site "
 "\"{site}\" without download enabled."
 msgstr ""
 
-#: src/Controller/Site/DownloadController.php:115
-#: src/Controller/Site/DownloadController.php:204
+#: src/Controller/Site/DownloadController.php:124
+#: src/Controller/Site/DownloadController.php:214
 msgid "The ZipStream library is required to download multiple files as zip."
 msgstr ""
 
-#: src/Controller/Site/DownloadController.php:139
+#: src/Controller/Site/DownloadController.php:148
 msgid ""
 "Attempt to download zip via query for {resource_type} on site \"{site}\" "
 "without download enabled."
 msgstr ""
 
-#: src/Controller/Site/DownloadController.php:623
+#: src/Controller/Site/DownloadController.php:644
 msgid ""
 "Media #{media_id}: unable to fetch the full iiif image, so the local "
 "derivative is used."
