@@ -51,16 +51,23 @@ Quick start
 The module provides:
 - A view helper `downloadZip()` to display download links in themes
 - A resource page block layout for the resource pages
-- Site settings to configure download behavior
+- Main settings and site settings to configure download behavior
 
 **Important**: Download is disabled by default for security reasons. Enable it
-in site settings before the download button appears.
+in main settings for all sites, or in site settings, before the download button
+appears.
 
 
 Configuration
 -------------
 
-Site settings allow to configure:
+Main settings define the options for all sites. Each site uses them by default
+and can override any of them in its site settings: an empty value or the option
+"Use main settings" uses the main value, and the checkboxes become a choice
+between "Use main settings", "Yes" and "No". A site can also remove the text
+file or the asset defined in main settings.
+
+The settings allow to configure:
 
 - Enable download zip: Must be checked to enable the feature (default: disabled).
   Unauthorized download attempts are logged.
