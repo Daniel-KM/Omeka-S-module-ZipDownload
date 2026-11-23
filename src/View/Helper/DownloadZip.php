@@ -69,17 +69,16 @@ class DownloadZip extends AbstractHelper
         $url = $plugins->get('url');
         $escape = $plugins->get('escapeHtml');
         $translate = $plugins->get('translate');
-        $siteSetting = $plugins->get('siteSetting');
 
         // Check if download is enabled for this site.
-        if (!$siteSetting('zipdownload_enabled', false)) {
+        if (!$this->zipSetting('zipdownload_enabled', false)) {
             return '';
         }
 
         // Get options from site settings or override.
-        $content = $options['content'] ?? $siteSetting('zipdownload_content', 'all');
-        $singleAsFile = $options['single_as_file'] ?? (bool) $siteSetting('zipdownload_single_as_file', false);
-        $tag = $options['tag'] ?? $siteSetting('zipdownload_tag', 'button');
+        $content = $options['content'] ?? $this->zipSetting('zipdownload_content', 'all');
+        $singleAsFile = $options['single_as_file'] ?? (bool) $this->zipSetting('zipdownload_single_as_file', false);
+        $tag = $options['tag'] ?? $this->zipSetting('zipdownload_tag', 'button');
         $label = $options['label'] ?? $translate('Download');
         $class = $options['class'] ?? '';
         $attributes = $options['attributes'] ?? [];
@@ -90,7 +89,7 @@ class DownloadZip extends AbstractHelper
         } elseif (isset($options['type'])) {
             $types = [(string) $options['type']];
         } else {
-            $types = $siteSetting('zipdownload_type', ['original']);
+            $types = $this->zipSetting('zipdownload_type', ['original']);
             if (is_string($types)) {
                 $types = [$types];
             }
@@ -102,8 +101,8 @@ class DownloadZip extends AbstractHelper
 
         // Check if resource has downloadable medias.
         $medias = $this->getDownloadableMedias($resource, $content);
-        $hasCopyrightText = strlen(trim((string) $siteSetting('zipdownload_text', '')));
-        $hasAsset = (int) $siteSetting('zipdownload_asset');
+        $hasCopyrightText = strlen(trim((string) $this->zipSetting('zipdownload_text', '')));
+        $hasAsset = (int) $this->zipSetting('zipdownload_asset');
         if (empty($medias) && !$hasCopyrightText && !$hasAsset) {
             return '';
         }
@@ -129,7 +128,7 @@ class DownloadZip extends AbstractHelper
             'medium' => $translate('Medium'),
             'square' => $translate('Square'),
         ];
-        $customLabels = $siteSetting('zipdownload_type_labels', []);
+        $customLabels = $this->zipSetting('zipdownload_type_labels', []);
         if (is_array($customLabels)) {
             $typeLabels = array_replace(
                 $typeLabels,
@@ -285,8 +284,8 @@ class DownloadZip extends AbstractHelper
      */
     protected function calculateTotalSize(array $medias, string $type): int
     {
-        $max = (int) $this->getView()->siteSetting('zipdownload_iiif_full_max', 0);
-        $this->iiifFull = $this->getView()->siteSetting('zipdownload_iiif_full')
+        $max = (int) $this->zipSetting('zipdownload_iiif_full_max', 0);
+        $this->iiifFull = $this->zipSetting('zipdownload_iiif_full')
             && (!$max || count($medias) <= $max);
         $totalSize = 0;
         foreach ($medias as $media) {
@@ -421,12 +420,11 @@ class DownloadZip extends AbstractHelper
         $url = $plugins->get('url');
         $escape = $plugins->get('escapeHtml');
         $translate = $plugins->get('translate');
-        $siteSetting = $plugins->get('siteSetting');
         $api = $plugins->get('api');
         $easyMeta = $plugins->get('easyMeta');
 
         // Check if download is enabled for this site.
-        if (!$siteSetting('zipdownload_enabled', false)) {
+        if (!$this->zipSetting('zipdownload_enabled', false)) {
             return '';
         }
 
@@ -437,7 +435,7 @@ class DownloadZip extends AbstractHelper
 
         // Get options (singular in route, plural for api).
         $resourceType = $options['resource_type'] ?? 'items';
-        $tag = $options['tag'] ?? $siteSetting('zipdownload_tag', 'button');
+        $tag = $options['tag'] ?? $this->zipSetting('zipdownload_tag', 'button');
         $label = $options['label'] ?? $translate('Download');
         $class = $options['class'] ?? '';
         $attributes = $options['attributes'] ?? [];
@@ -448,7 +446,7 @@ class DownloadZip extends AbstractHelper
         } elseif (isset($options['type'])) {
             $types = [(string) $options['type']];
         } else {
-            $types = $siteSetting('zipdownload_type', ['original']);
+            $types = $this->zipSetting('zipdownload_type', ['original']);
             if (is_string($types)) {
                 $types = [$types];
             }
@@ -467,7 +465,7 @@ class DownloadZip extends AbstractHelper
         }
 
         // Apply limit from site settings.
-        $maxResources = (int) $siteSetting('zipdownload_max', 25);
+        $maxResources = (int) $this->zipSetting('zipdownload_max', 25);
         if ($maxResources > 0) {
             $query['limit'] = min($query['limit'] ?? $maxResources, $maxResources);
         }
@@ -512,7 +510,7 @@ class DownloadZip extends AbstractHelper
             'medium' => $translate('Medium'),
             'square' => $translate('Square'),
         ];
-        $customLabels = $siteSetting('zipdownload_type_labels', []);
+        $customLabels = $this->zipSetting('zipdownload_type_labels', []);
         if (is_array($customLabels)) {
             $typeLabels = array_replace(
                 $typeLabels,
@@ -616,5 +614,14 @@ class DownloadZip extends AbstractHelper
         $slug = preg_replace('/-{2,}/', '_', $slug);
         $slug = preg_replace('/-*$/', '', $slug);
         return substr($slug, 0, 100) ?: 'download';
+    }
+
+    /**
+     * Get a setting of the site, or of the main settings when empty.
+     */
+    protected function zipSetting(string $name, $default = null)
+    {
+        $view = $this->getView();
+        return \ZipDownload\Module::resolveSetting($view->siteSetting($name), $view->setting($name)) ?? $default;
     }
 }

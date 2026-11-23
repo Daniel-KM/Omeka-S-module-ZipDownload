@@ -99,7 +99,7 @@ class Module extends AbstractModule
         $messenger = $services->get('ControllerPluginManager')->get('messenger');
         $urlHelper = $services->get('ViewHelperManager')->get('url');
         $message = new PsrMessage(
-            'By default, the zip download is not allowed on sites. Enable it in the site settings of each site.' // @translate
+            'By default, the zip download is not allowed on sites. Enable it in the main settings for all sites, or in the site settings of each site.' // @translate
         );
         $messenger->addWarning($message);
     }
@@ -107,9 +107,33 @@ class Module extends AbstractModule
     public function attachListeners(SharedEventManagerInterface $sharedEventManager): void
     {
         $sharedEventManager->attach(
+            \Omeka\Form\SettingForm::class,
+            'form.add_elements',
+            [$this, 'handleMainSettings']
+        );
+        $sharedEventManager->attach(
             \Omeka\Form\SiteSettingsForm::class,
             'form.add_elements',
             [$this, 'handleSiteSettings']
         );
+    }
+
+    /**
+     * Get a site setting value, or the main one when the site value is empty.
+     *
+     * Site booleans are stored as "yes" or "no".
+     */
+    public static function resolveSetting($siteValue, $mainValue)
+    {
+        if ($siteValue === null || $siteValue === '' || $siteValue === []) {
+            return $mainValue;
+        }
+        if ($siteValue === 'yes') {
+            return true;
+        }
+        if ($siteValue === 'no') {
+            return false;
+        }
+        return $siteValue;
     }
 }

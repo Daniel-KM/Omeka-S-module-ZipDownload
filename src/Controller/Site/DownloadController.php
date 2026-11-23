@@ -51,8 +51,7 @@ class DownloadController extends AbstractActionController
         $singleAsFile = (bool) $this->params()->fromQuery('single_as_file', false);
 
         // Check if download is enabled for this site.
-        $siteSettings = $this->siteSettings();
-        if (!$siteSettings->get('zipdownload_enabled', false)) {
+        if (!$this->zipSetting('zipdownload_enabled', false)) {
             $this->logger()->warn(
                 'Attempt to download zip for resource {resource_type} #{resource_id} on site "{site}" without download enabled.', // @translate
                 [
@@ -92,8 +91,8 @@ class DownloadController extends AbstractActionController
         $this->iiifFull = $this->useIiifFull(count($medias));
 
         // Allow empty medias when copyright text or asset is configured.
-        $hasCopyrightText = strlen(trim((string) $this->siteSettings()->get('zipdownload_text', '')));
-        $hasAsset = (int) $this->siteSettings()->get('zipdownload_asset');
+        $hasCopyrightText = strlen(trim((string) $this->zipSetting('zipdownload_text', '')));
+        $hasAsset = (int) $this->zipSetting('zipdownload_asset');
         if (!$medias && !$hasCopyrightText && !$hasAsset) {
             return $this->notFoundAction();
         }
@@ -142,8 +141,7 @@ class DownloadController extends AbstractActionController
         $type = $this->params()->fromQuery('type', 'original');
 
         // Check if download is enabled for this site.
-        $siteSettings = $this->siteSettings();
-        if (!$siteSettings->get('zipdownload_enabled', false)) {
+        if (!$this->zipSetting('zipdownload_enabled', false)) {
             $this->logger()->warn(
                 'Attempt to download zip via query for {resource_type} on site "{site}" without download enabled.', // @translate
                 [
@@ -174,7 +172,7 @@ class DownloadController extends AbstractActionController
         unset($query['type']);
 
         // Apply limit from site settings.
-        $maxResources = (int) $siteSettings->get('zipdownload_max', 25);
+        $maxResources = (int) $this->zipSetting('zipdownload_max', 25);
         if ($maxResources > 0) {
             $query['limit'] = min($query['limit'] ?? $maxResources, $maxResources);
         }
@@ -429,7 +427,7 @@ class DownloadController extends AbstractActionController
      */
     protected function getCopyrightFilename(): string
     {
-        $name = trim((string) $this->siteSettings()->get('zipdownload_text_filename', ''));
+        $name = trim((string) $this->zipSetting('zipdownload_text_filename', ''));
         return $name !== '' ? $this->sanitizeFilename($name) : 'COPYRIGHT.txt';
     }
 
@@ -438,7 +436,7 @@ class DownloadController extends AbstractActionController
      */
     protected function addAssetToZip(ZipStream $zip): void
     {
-        $assetId = (int) $this->siteSettings()->get('zipdownload_asset');
+        $assetId = (int) $this->zipSetting('zipdownload_asset');
         if (!$assetId) {
             return;
         }
@@ -585,9 +583,8 @@ class DownloadController extends AbstractActionController
      */
     protected function useIiifFull(int $countFiles): bool
     {
-        $siteSettings = $this->siteSettings();
-        $max = (int) $siteSettings->get('zipdownload_iiif_full_max', 0);
-        return $siteSettings->get('zipdownload_iiif_full')
+        $max = (int) $this->zipSetting('zipdownload_iiif_full_max', 0);
+        return $this->zipSetting('zipdownload_iiif_full')
             && (!$max || $countFiles <= $max);
     }
 
@@ -724,7 +721,7 @@ class DownloadController extends AbstractActionController
      */
     protected function buildCopyrightText($resource, array $medias, string $type): ?string
     {
-        $zipdownloadText = $this->siteSettings()->get('zipdownload_text', '');
+        $zipdownloadText = $this->zipSetting('zipdownload_text', '');
         if (!strlen(trim((string) $zipdownloadText))) {
             return null;
         }
@@ -793,7 +790,7 @@ class DownloadController extends AbstractActionController
         array $medias,
         string $type
     ): ?string {
-        $zipdownloadText = $this->siteSettings()->get('zipdownload_text', '');
+        $zipdownloadText = $this->zipSetting('zipdownload_text', '');
         if (!strlen(trim((string) $zipdownloadText))) {
             return null;
         }
@@ -852,5 +849,13 @@ class DownloadController extends AbstractActionController
         $name = preg_replace('/[^a-zA-Z0-9_\-\.\s]/', '', $name);
         $name = preg_replace('/\s+/', '_', $name);
         return substr($name, 0, 100) ?: 'download';
+    }
+
+    /**
+     * Get a setting of the site, or of the main settings when empty.
+     */
+    protected function zipSetting(string $name, $default = null)
+    {
+        return \ZipDownload\Module::resolveSetting($this->siteSettings()->get($name), $this->settings()->get($name)) ?? $default;
     }
 }

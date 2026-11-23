@@ -15,6 +15,7 @@ return [
     ],
     'form_elements' => [
         'invokables' => [
+            Form\SettingsFieldset::class => Form\SettingsFieldset::class,
             Form\SiteSettingsFieldset::class => Form\SiteSettingsFieldset::class,
         ],
     ],
@@ -70,7 +71,7 @@ return [
         ],
     ],
     'zipdownload' => [
-        'site_settings' => [
+        'settings' => [
             'zipdownload_enabled' => false,
             'zipdownload_content' => 'all',
             'zipdownload_type' => ['original'],
@@ -94,6 +95,21 @@ return [
 
                 URL: {resource_url}
                 TXT,
+        ],
+        // An empty value uses the main setting; booleans are "yes" or "no".
+        'site_settings' => [
+            'zipdownload_enabled' => '',
+            'zipdownload_content' => '',
+            'zipdownload_type' => [],
+            'zipdownload_type_labels' => [],
+            'zipdownload_asset' => null,
+            'zipdownload_text_filename' => '',
+            'zipdownload_iiif_full' => '',
+            'zipdownload_iiif_full_max' => '',
+            'zipdownload_single_as_file' => '',
+            'zipdownload_tag' => '',
+            'zipdownload_max' => '',
+            'zipdownload_text' => '',
         ],
     ],
 ];
